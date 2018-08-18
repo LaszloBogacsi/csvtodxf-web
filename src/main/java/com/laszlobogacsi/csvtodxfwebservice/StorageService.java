@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 public interface StorageService {
-    public UUID store(MultipartFile file);
+    public void store(MultipartFile file, String destination);
 }

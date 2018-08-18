@@ -2,21 +2,28 @@ package com.laszlobogacsi.csvtodxfwebservice;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 @Component("fileStorageService")
 public class FileSystemStorageService implements StorageService {
 
     @Override
-    public UUID store(MultipartFile file) {
-        // save incoming file to a folder
-            // create a folder if not exist
-        // get path to the folder
-        // if file saved store the path and an id for the file.
+    public void store(MultipartFile multipartFile, String destination) {
+        File dir = new File(destination);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
-        //return UUID.randomUUID();
-        throw new NotImplementedException();
+        String fileName = multipartFile.getOriginalFilename();
+        File serverFile = new File(dir.getAbsolutePath() + File.separator + fileName);
+
+        try {
+            multipartFile.transferTo(serverFile);
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO: handle io errors
+        }
     }
 }

@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.UUID;
+
 @RestController
-public class UploadFileRestController {
+public class UploadFileController {
     @Autowired
     @Qualifier("fileStorageService")
     private StorageService fileStorageService;
@@ -23,12 +26,11 @@ public class UploadFileRestController {
     @RequestMapping("/upload-file")
     @PostMapping
     ResponseEntity uploadFile(@ModelAttribute("file") MultipartFile file) {
-        fileStorageService.store(file);
-//        FileuploadResponse body = new FileuploadResponse(); // return an id for the saved file, this needs to be kep in a table id, filename, location.
-        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"id\":\"123456789\"}");
-//        ResponseEntity.badRequest()...
+        String rootPath = System.getProperty("user.dir");
+        UUID uniqueFolderName = UUID.randomUUID();
+        String destination = rootPath + File.separator + "file-uploads" + File.separator + uniqueFolderName;
+        fileStorageService.store(file, destination);
+        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"id\":\"" + uniqueFolderName + "\"}");
         return response;
     }
-
-    // FileuploadREsponse is an object returned form the post request, serialized in to json, attribs: id of the saved file, optional (date, time, filesize, filename)
 }
