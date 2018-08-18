@@ -16,4 +16,8 @@ public class UploadProperties {
         this.rootDir = rootDir;
     }
 
+    public UploadProperties() {
+    }
+
+
 }
