@@ -3,18 +3,22 @@ package com.laszlobogacsi.csvtodxfwebservice;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 public class FileSystemStorageServiceTest {
 
-    StorageService fileStorageService = new FileSystemStorageService();
+    @Autowired
+    FileSystemStorageService fileStorageService;
     MockMultipartFile mockFile;
     public static final String DESTINATION = "src/test/resources/test-upload-dir";
     public static final String uniqueDirectoryName = "uniqueTestName";

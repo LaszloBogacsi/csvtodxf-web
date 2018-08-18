@@ -1,14 +1,22 @@
 package com.laszlobogacsi.csvtodxfwebservice;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
-@Component("fileStorageService")
+@Service("fileStorageService")
 public class FileSystemStorageService implements StorageService {
+
+    private UploadProperties configuration;
+
+    @Autowired
+    public FileSystemStorageService(UploadProperties configuration) {
+        this.configuration = configuration;
+    }
+
 
     @Override
     public void store(MultipartFile multipartFile, String destination) {
@@ -26,4 +34,5 @@ public class FileSystemStorageService implements StorageService {
             e.printStackTrace(); // TODO: handle io errors
         }
     }
+
 }
