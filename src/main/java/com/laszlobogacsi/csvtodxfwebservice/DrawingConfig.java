@@ -9,6 +9,7 @@ import java.util.UUID;
 @Builder
 public class DrawingConfig {
     private UUID drawingId;
+    private String fileName;
     private String separator;
     private double textHeight;
     private boolean doPrintId;
@@ -17,5 +18,4 @@ public class DrawingConfig {
     private boolean doPrintHeight;
     private boolean is3D;
     private boolean isLayerByCode;
-
 }

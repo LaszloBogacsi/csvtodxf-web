@@ -1,6 +1,7 @@
 package com.laszlobogacsi.csvtodxfwebservice.resources;
 
 import com.laszlobogacsi.csvtodxfwebservice.StorageService;
+import com.laszlobogacsi.csvtodxfwebservice.file.PathProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -23,14 +24,16 @@ public class UploadFileController {
     @Qualifier("fileStorageService")
     private StorageService fileStorageService;
 
+    @Autowired
+    @Qualifier("fileSystemPathProvider")
+    private PathProvider pathProvider;
+
     @RequestMapping("/upload-file")
     @PostMapping
     ResponseEntity uploadFile(@ModelAttribute("file") MultipartFile file) {
-        String rootPath = System.getProperty("user.dir");
         UUID uniqueFolderName = UUID.randomUUID();
-        String destination = rootPath + File.separator + "file-uploads" + File.separator + uniqueFolderName;
-        fileStorageService.store(file, destination);
-        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"id\":\"" + uniqueFolderName + "\"}");
+        fileStorageService.store(file, pathProvider.getPathForParentFolderBy(uniqueFolderName.toString()));
+        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"id\":\"" + uniqueFolderName + "\", \"fileName\":\""+ file.getOriginalFilename()+"\"}");
         return response;
     }
 }
