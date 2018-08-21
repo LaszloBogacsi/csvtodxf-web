@@ -18,13 +18,13 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfiguration.class, loader = AnnotationConfigContextLoader.class)
-public class FileSystemStorageServiceTest {
+public class FileSystemStorageServiceTest extends FileTest {
 
-    StorageService fileStorageService;
-    MockMultipartFile mockFile;
-    public static final String DESTINATION = "src/test/resources/test-upload-dir";
-    public static final String uniqueDirectoryName = "uniqueTestName";
-    public final String pathToSave = DESTINATION + File.separator + uniqueDirectoryName;
+    private StorageService fileStorageService;
+    private MockMultipartFile mockFile;
+    private static final String DESTINATION = "src/test/resources/test-upload-dir";
+    private static final String uniqueDirectoryName = "uniqueTestName";
+    private final String pathToSave = DESTINATION + File.separator + uniqueDirectoryName;
 
     @Autowired
     UploadProperties configuration;
@@ -33,7 +33,6 @@ public class FileSystemStorageServiceTest {
     public void setUp() throws Exception {
         fileStorageService = new FileSystemStorageService(configuration);
         mockFile = new MockMultipartFile("testFile", "testFile.csv", "text/plain", "1,2,3,4,5,6".getBytes(StandardCharsets.UTF_8));
-
     }
 
     @After
@@ -44,7 +43,7 @@ public class FileSystemStorageServiceTest {
     @Test
     public void shouldCreateUniqueDirectory() {
         fileStorageService.store(mockFile, pathToSave);
-        String[] directories = new File(DESTINATION).list();
+        String[] directories = getDirectoriesList(DESTINATION);
         assertNotNull(directories);
         assertThat(directories.length, greaterThan(0));
         assertEquals(uniqueDirectoryName, directories[0]);
@@ -53,18 +52,9 @@ public class FileSystemStorageServiceTest {
     @Test
     public void shouldSaveFileToDestinationDirectory() {
         fileStorageService.store(mockFile, pathToSave);
-        File[] files = new File(pathToSave).listFiles();
+        File[] files = getFiles(pathToSave);
         assertNotNull(files);
         assertTrue(files[0].exists());
-    }
-
-    boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
+        assertEquals(mockFile.getOriginalFilename(), files[0].getName());
     }
 }
