@@ -2,12 +2,8 @@ package com.laszlobogacsi.csvtodxfwebservice.resources;
 
 import com.laszlobogacsi.csvtodxfwebservice.DrawingConfig;
 import com.laszlobogacsi.csvtodxfwebservice.StorageService;
-import com.laszlobogacsi.csvtodxfwebservice.converter.Converter;
-import com.laszlobogacsi.csvtodxfwebservice.converter.CsvToDxfConverter;
-import com.laszlobogacsi.csvtodxfwebservice.file.CsvFileReader;
-import com.laszlobogacsi.csvtodxfwebservice.file.FileReader;
-import com.laszlobogacsi.csvtodxfwebservice.file.PathProvider;
-import com.laszlobogacsi.csvtodxfwebservice.report.ConversionReport;
+import com.laszlobogacsi.csvtodxfwebservice.convertjob.ConvertJob;
+import com.laszlobogacsi.csvtodxfwebservice.convertjob.JobManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -24,23 +20,16 @@ public class ConvertFileController {
     private StorageService fileStorageService;
 
     @Autowired
-    @Qualifier("fileSystemPathProvider")
-    private PathProvider pathProvider;
+    private JobManager manager;
 
     @RequestMapping("/convert")
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
-        FileReader fileReader = new CsvFileReader();
-        ConversionReport conversionReport = new ConversionReport();
-        Converter converter = new CsvToDxfConverter(fileReader, conversionReport, pathProvider);
-        try {
-            converter.convert(config);
-        } catch (Exception e) {
-            e.printStackTrace(); // TODO: exception handling strategy
-        }
 
-        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"config\":\"" + config.getDrawingId() + "\"}"); // return a job id
-        return response;
+        JobResponse response = new JobResponse(manager.execute(new ConvertJob(config.getDrawingId().toString(), config)));
+
+        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"response\":\"" + response + "\"}"); // return a job id
+        return responseEntity;
     }
 
     @RequestMapping("/downloadlink/{id}") // this is should be the job id
