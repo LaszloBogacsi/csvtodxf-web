@@ -4,6 +4,7 @@ import com.laszlobogacsi.csvtodxfwebservice.DrawingConfig;
 import com.laszlobogacsi.csvtodxfwebservice.StorageService;
 import com.laszlobogacsi.csvtodxfwebservice.convertjob.ConvertJob;
 import com.laszlobogacsi.csvtodxfwebservice.convertjob.JobManager;
+import com.laszlobogacsi.csvtodxfwebservice.util.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -26,10 +27,10 @@ public class ConvertFileController {
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
 
-        JobResponse response = new JobResponse(manager.execute(new ConvertJob(config.getDrawingId().toString(), config)));
+        JobResponse response = manager.start(new ConvertJob(config.getDrawingId().toString(), config));
+        String jsonResponse = JsonMapper.fromObj(response);
 
-        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"response\":\"" + response + "\"}"); // return a job id
-        return responseEntity;
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"response\":" + jsonResponse + "}");
     }
 
     @RequestMapping("/downloadlink/{id}") // this is should be the job id

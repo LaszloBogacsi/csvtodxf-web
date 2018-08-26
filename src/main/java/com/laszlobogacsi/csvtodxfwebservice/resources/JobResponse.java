@@ -1,15 +1,16 @@
 package com.laszlobogacsi.csvtodxfwebservice.resources;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class JobResponse {
 
     @JsonProperty("id")
     private String jobId;
 
-    public JobResponse(String jobId) {
-        this.jobId = jobId;
-    }
+    @JsonProperty("result")
+    private JobResult result;
 }
