@@ -12,6 +12,9 @@ public class JobResponse {
     @JsonProperty("id")
     private String jobId;
 
+    @JsonProperty("downloadId")
+    private String downloadId;
+
     @JsonProperty("report")
     private ConversionReport report;
 

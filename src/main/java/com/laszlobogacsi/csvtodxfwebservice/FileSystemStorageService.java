@@ -1,6 +1,8 @@
 package com.laszlobogacsi.csvtodxfwebservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,4 +37,8 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    @Override
+    public Resource loadFileAsResource(String fileName) {
+        return new FileSystemResource(fileName);
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,12 +25,14 @@ public class JobExecutorService {
     private final int MAX_QUEUE_SIZE = 100;
     private PathProvider pathProvider;
     private ExecutorService executorService;
+    private final FileReader fileReader;
 
 
     @Autowired
     public JobExecutorService(PathProvider pathProvider) {
         this.pathProvider = pathProvider;
         this.executorService = Executors.newFixedThreadPool(MAX_THREADS);
+        fileReader = new CsvFileReader();
     }
 
     private Queue<ConvertJob> queue = new ConcurrentLinkedQueue<>();
@@ -58,16 +61,18 @@ public class JobExecutorService {
 
 
     private JobResponse execute(ConvertJob job) {
-        // move these to the place pf execution
-        FileReader fileReader = new CsvFileReader();
         Converter converter = new CsvToDxfConverter(fileReader, pathProvider);
         try {
             ConversionReport report = converter.convert(job.config);
-            return new JobResponse(job.getJobId(),report, JobResult.SUCCESS);
+            return new JobResponse(job.getJobId(), generateDownloadId(), report, JobResult.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace(); // TODO: exception handling strategy
-            return new JobResponse(job.getJobId(), ConversionReport.builder().build(), JobResult.CONVERSION_ERROR);
+            return new JobResponse(job.getJobId(), "0", ConversionReport.builder().build(), JobResult.CONVERSION_ERROR);
         }
+    }
+
+    private String generateDownloadId() {
+        return UUID.randomUUID().toString();
     }
 
     private boolean canAddToQueue() {
