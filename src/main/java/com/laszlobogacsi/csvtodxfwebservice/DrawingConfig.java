@@ -1,12 +1,10 @@
 package com.laszlobogacsi.csvtodxfwebservice;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-@Builder
 public class DrawingConfig {
     private UUID drawingId;
     private String fileName;

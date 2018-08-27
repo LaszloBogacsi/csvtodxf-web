@@ -16,39 +16,40 @@ import java.util.List;
 
 
 public class CsvToDxfConverter implements Converter {
-    private DrawingConfig config;
-    private ConversionReport report;
     private PathProvider pathProvider;
     private FileReader reader;
 
-    public CsvToDxfConverter(FileReader fileReader, ConversionReport report, PathProvider pathProvider) {
+    public CsvToDxfConverter(FileReader fileReader, PathProvider pathProvider) {
         this.reader = fileReader;
-        this.report = report;
         this.pathProvider = pathProvider;
     }
 
     @Override
-    public void convert(DrawingConfig config) throws Exception {
+    public ConversionReport convert(DrawingConfig config) throws Exception {
         long start = System.currentTimeMillis();
-        this.config = config;
-        String dxf = new DXF(config).createDxf(readLines());
+        List<CsvLine> csvLines = readLines(config);
+        String dxf = new DXF(config).createDxf(csvLines);
         String outputPath = pathProvider.getPathForFileBy(config.getDrawingId().toString(), getDxfFileName(config.getFileName()));
-        saveToFile(dxf, outputPath);
+        double fileSize = saveToFile(dxf, outputPath);
         long duration = System.currentTimeMillis() - start;
-        this.report.setDurationInMillies(duration);
+
+        return ConversionReport.builder()
+                .savedFilePath(outputPath)
+                .durationInMillies(duration)
+                .fileSize(fileSize)
+                .numberOfLinesConverted(csvLines.size())
+                .build();
     }
 
-    private List<CsvLine> readLines() throws IOException {
+    private List<CsvLine> readLines(DrawingConfig config) {
         String inputPath = pathProvider.getPathForFileBy(config.getDrawingId().toString(), config.getFileName());
-        List<CsvLine> lines = this.reader.readLine(inputPath, config.getSeparator());
-        this.report.setNumberOfLinesConverted(lines.size());
-        return lines;
+        return this.reader.readLine(inputPath, config.getSeparator());
     }
 
-    private void saveToFile(String dxf, String outputPath) throws IOException {
+    private double saveToFile(String dxf, String outputPath) throws IOException { // should go to it's own fileWriter
         Path newFile = Files.write(Paths.get(outputPath), dxf.getBytes());
         File file = new File(String.valueOf(newFile));
-        this.report.setFileSize(file.length());
+        return file.length();
     }
 
     private String getDxfFileName(String originalFileName) {

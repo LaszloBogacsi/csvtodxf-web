@@ -32,30 +32,21 @@ public class JobExecutorService {
         this.executorService = Executors.newFixedThreadPool(MAX_THREADS);
     }
 
-    Queue<ConvertJob> queue = new ConcurrentLinkedQueue<>();
+    private Queue<ConvertJob> queue = new ConcurrentLinkedQueue<>();
 
-    // TODO: create JobResponse object <- this will be wrapped in the JobResult object
-
-//    public JobResult execute() {
-//        // public method to call form outside, maybe form the manager.
-//    }
-
-    int queueSize() {
+    private int queueSize() {
         return queue.size();
     }
 
-    String addToQueue(ConvertJob job) throws JobExecutionException{
-        String jobId = job.getJobId();
-        // add job to queue
+    private void addToQueue(ConvertJob job) throws JobExecutionException{
         if (canAddToQueue()){
             queue.add(job);
         } else {
             throw new JobExecutionException("Queue is full, try adding new job later");
         }
-        return jobId;
     }
 
-    ConvertJob pollJobQueue() {
+    private ConvertJob pollJobQueue() {
         return queue.poll();
     }
 
@@ -69,14 +60,13 @@ public class JobExecutorService {
     private JobResponse execute(ConvertJob job) {
         // move these to the place pf execution
         FileReader fileReader = new CsvFileReader();
-        ConversionReport conversionReport = new ConversionReport();
-        Converter converter = new CsvToDxfConverter(fileReader, conversionReport, pathProvider);
+        Converter converter = new CsvToDxfConverter(fileReader, pathProvider);
         try {
-            converter.convert(job.config);
-            return new JobResponse(job.getJobId(), JobResult.SUCCESS);
+            ConversionReport report = converter.convert(job.config);
+            return new JobResponse(job.getJobId(),report, JobResult.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace(); // TODO: exception handling strategy
-            return new JobResponse(job.getJobId(), JobResult.CONVERSION_ERROR);
+            return new JobResponse(job.getJobId(), ConversionReport.builder().build(), JobResult.CONVERSION_ERROR);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.laszlobogacsi.csvtodxfwebservice.file;
 
+import org.springframework.stereotype.Service;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
 
+@Service
 public class GZipFileCompressorService implements FileCompressorService {
     @Override
     public void compress(String pathToFileToCompress, String newFilePath) {
