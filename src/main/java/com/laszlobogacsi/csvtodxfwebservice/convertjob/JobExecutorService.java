@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 @Service
 public class JobExecutorService {
 
-    public static final int MAX_THREADS = 4;
+    private static final int MAX_THREADS = 4;
     private final int MAX_QUEUE_SIZE = 100;
     private PathProvider pathProvider;
     private ExecutorService executorService;
