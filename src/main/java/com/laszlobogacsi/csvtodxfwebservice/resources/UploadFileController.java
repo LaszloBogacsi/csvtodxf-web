@@ -7,15 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.StreamingHttpOutputMessage;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.UUID;
 
 @RestController
@@ -27,6 +21,8 @@ public class UploadFileController {
     @Autowired
     @Qualifier("fileSystemPathProvider")
     private PathProvider pathProvider;
+
+    @CrossOrigin(origins = "http://evil.com/")
 
     @RequestMapping("/upload-file")
     @PostMapping

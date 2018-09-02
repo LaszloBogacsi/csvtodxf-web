@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 
 @RestController
 public class ConvertFileController {
@@ -30,21 +32,34 @@ public class ConvertFileController {
     @Autowired
     private ConvertTaskRepository convertTaskRepository;
 
-
+    @CrossOrigin(origins = "http://evil.com/")
     @RequestMapping("/convert")
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
+        System.out.println("called");
 
-        JobResponse response = manager.start(new ConvertJob(config.getDrawingId().toString(), config));
-        ConvertTaskResult result = ConvertTaskResult.builder()
-                .downloadId(response.getDownloadId())
-                .durationInMillies(response.getReport().getDurationInMillies())
-                .fileSize(response.getReport().getFileSize())
-                .numberOfLinesConverted(response.getReport().getNumberOfLinesConverted())
-                .build();
-        String jsonResponse = JsonMapper.fromObj(result);
+        String jsonResponse = null;
+        try {
+            JobResponse response = manager.start(new ConvertJob(config.getDrawingId().toString(), config));
+            ConvertTaskResult result = ConvertTaskResult.builder()
+                    .downloadId(response.getDownloadId())
+                    .durationInMillies(response.getReport().getDurationInMillies())
+                    .fileSize(response.getReport().getFileSize())
+                    .numberOfLinesConverted(response.getReport().getNumberOfLinesConverted())
+                    .build();
+            jsonResponse = JsonMapper.fromObj(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(500)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"response\":\"" + Arrays.toString(e.getStackTrace()) + "\"}");
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"response\":" + jsonResponse + "}");
+        return ResponseEntity
+                .status(200)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"response\":" + jsonResponse + "}");
     }
 
     @RequestMapping("/download/{id}") // this is should be the job id
