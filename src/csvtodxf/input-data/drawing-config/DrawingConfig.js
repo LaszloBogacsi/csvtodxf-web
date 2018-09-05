@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import * as Rx from "rxjs-compat";
+import {Button} from 'semantic-ui-react'
+
 
 class DrawingConfig extends Component {
     constructor(props) {
@@ -88,7 +90,7 @@ class DrawingConfig extends Component {
                         <input type="checkbox" name="doPrintCode" onChange={this.handleChange}/>Code<br/>
                         <input type="checkbox" name="doLayerByCode" onChange={this.handleChange}/>Layer By Code<br/>
                     </div>
-                    <button type="submit">GO</button>
+                    <Button type="submit" content="Go" primary/>
                 </form>
             </div>
         );

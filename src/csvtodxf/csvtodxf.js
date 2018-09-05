@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import InputData from "./input-data/InputData";
 import Result from "./results/Result";
+import {Container, Grid} from "semantic-ui-react";
 
 class CsvToDxf extends Component {
     constructor(props) {
@@ -19,12 +20,21 @@ class CsvToDxf extends Component {
     render() {
         const convertResponse = this.state.convertResponse;
         return (
-            <div>
+            <Container textAlign='left' style={{width : 900}}>
                 <h2>CSV to DXF converter</h2>
                 <h4>Convert csv survey data to Cad drawing</h4>
-                <InputData onConvertResponse={this.handleConvertResponse}/>
-                <Result convertResponse={convertResponse}/>
-            </div>
+                <Grid>
+                    <Grid.Row>
+                            <Grid.Column width={8} >
+                                <InputData onConvertResponse={this.handleConvertResponse}/>
+                            </Grid.Column>
+                            <Grid.Column width={8} >
+                                <Result convertResponse={convertResponse}/>
+                            </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+
+            </Container>
         );
 
     }

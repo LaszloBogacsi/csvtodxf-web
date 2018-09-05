@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import * as Rx from "rxjs-compat";
 import Dropzone from "react-dropzone";
+import {Input} from "semantic-ui-react";
 
 class Fileupload extends Component {
 
@@ -70,7 +71,7 @@ class Fileupload extends Component {
         return (
             <form>
                 <label>Select a csv file form your computer</label>
-                <input type="file" name="upload" accept=".csv, .txt"  onChange={this.handleChange}/>
+                <Input type="file" name="upload" accept=".csv, .txt"  onChange={this.handleChange}/>
                 <Dropzone accept={"application/vnd.ms-excel, text/plain" } onDrop={this.onDrop}/>
                 <ul>{this.state.files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
             </form>
