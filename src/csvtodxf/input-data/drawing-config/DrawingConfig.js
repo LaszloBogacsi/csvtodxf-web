@@ -8,13 +8,13 @@ class DrawingConfig extends Component {
             drawingId: this.props.drawingId,
             fileName: this.props.fileName,
             separator: this.separators[0].value,
-            textHeight: '1.0',
-            is3D: false,
-            isPointNumber: false,
-            isHeight: false,
-            isCoordinate: false,
-            isCode: false,
-            isLayerByCode: false
+            textHeight: 1.0,
+            doPrintId: false,
+            doPrintCoords: false,
+            doPrintCode: false,
+            doPrintHeight: false,
+            doPrint3D: true,
+            doLayerByCode: false
 
         };
         console.log(this.state.fileName);
@@ -79,14 +79,14 @@ class DrawingConfig extends Component {
                                onChange={this.handleChange}/>
                     </div>
                     <div>
-                        <input type="checkbox" name="is3D" onChange={this.handleChange}/>3D<br/>
+                        <input type="checkbox" name="doPrint3D" onChange={this.handleChange}/>3D<br/>
                     </div>
                     <div>
-                        <input type="checkbox" name="isPointNumber" onChange={this.handleChange}/>Point Number<br/>
-                        <input type="checkbox" name="isHeight" onChange={this.handleChange}/>Height<br/>
-                        <input type="checkbox" name="isCoordinate" onChange={this.handleChange}/>Coordinate<br/>
-                        <input type="checkbox" name="isCode" onChange={this.handleChange}/>Code<br/>
-                        <input type="checkbox" name="isLayerByCode" onChange={this.handleChange}/>Layer By Code<br/>
+                        <input type="checkbox" name="doPrintId" onChange={this.handleChange}/>Point Number<br/>
+                        <input type="checkbox" name="doPrintHeight" onChange={this.handleChange}/>Height<br/>
+                        <input type="checkbox" name="doPrintCoords" onChange={this.handleChange}/>Coordinate<br/>
+                        <input type="checkbox" name="doPrintCode" onChange={this.handleChange}/>Code<br/>
+                        <input type="checkbox" name="doLayerByCode" onChange={this.handleChange}/>Layer By Code<br/>
                     </div>
                     <button type="submit">GO</button>
                 </form>
