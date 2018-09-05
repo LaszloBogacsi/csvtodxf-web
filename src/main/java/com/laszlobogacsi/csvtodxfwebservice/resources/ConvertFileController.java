@@ -36,8 +36,6 @@ public class ConvertFileController {
     @RequestMapping("/convert")
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
-        System.out.println("called");
-
         String jsonResponse = null;
         try {
             JobResponse response = manager.start(new ConvertJob(config.getDrawingId().toString(), config));

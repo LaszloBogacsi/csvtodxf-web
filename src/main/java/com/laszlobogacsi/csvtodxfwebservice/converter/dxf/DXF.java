@@ -36,7 +36,7 @@ public class DXF {
         String entities = lines.stream().map(line -> {
             StringBuilder sb = new StringBuilder();
             Position position;
-            if (config.is3D()) {
+            if (config.isDoPrint3D()) {
                 double positionH = Double.parseDouble(line.getLineElement3().orElse(String.valueOf(DEFAULT_HEIGHT)));
                 position = new Position(Double.parseDouble(line.getLineElement1()), Double.parseDouble(line.getLineElement2()), positionH);
             } else {
@@ -114,7 +114,7 @@ public class DXF {
     }
 
     private String getLayerNameFor(EntityType entityType, CsvLine line) {
-        if (this.config.isLayerByCode()) {
+        if (this.config.isDoLayerByCode()) {
             return line.getLineElement4().orElse("Unknown_Code");
         }
         return defaultLayerNames.get(entityType);

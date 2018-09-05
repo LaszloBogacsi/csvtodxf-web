@@ -14,6 +14,6 @@ public class DrawingConfig {
     private boolean doPrintCoords;
     private boolean doPrintCode;
     private boolean doPrintHeight;
-    private boolean is3D;
-    private boolean isLayerByCode;
+    private boolean doPrint3D;
+    private boolean doLayerByCode;
 }
