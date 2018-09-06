@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import * as Rx from "rxjs-compat";
 import Dropzone from "react-dropzone";
 import {Input} from "semantic-ui-react";
+import styles from "./dropzone.css"
 
 class Fileupload extends Component {
 
@@ -55,24 +56,35 @@ class Fileupload extends Component {
         });
     }
 
-    onDrop(files, rejected) {
+    onDrop(accepted, rejected) {
         this.setState({
-            files: files,
+            files: accepted,
             dropzoneActive: false
         });
         if (rejected.length > 0) {
             console.log("this filetype is not supported: " + rejected[0].name);
         }
-        const oneFile = files[0];
-        this.handleSubmit(oneFile);
-
+        const oneFile = this.state.files[0];
+        if (oneFile) this.handleSubmit(oneFile);
     }
     render() {
+        let className = styles.dropZone;
+        if (this.state.dropzoneActive) className += ' ' + styles.onDragActive;
         return (
             <form>
                 <label>Select a csv file form your computer</label>
-                <Input type="file" name="upload" accept=".csv, .txt"  onChange={this.handleChange}/>
-                <Dropzone accept={"application/vnd.ms-excel, text/plain" } onDrop={this.onDrop}/>
+                <Input fluid type="file" name="upload" accept=".csv, .txt"  onChange={this.handleChange}/>
+                <Dropzone
+                    className={className}
+                    acceptClassName={styles.accepted}
+                    rejectClassName={styles.rejected}
+                    onDragEnter={this.onDragEnter.bind(this)}
+                    onDragLeave={this.onDragLeave.bind(this)}
+                    accept={"application/vnd.ms-excel, text/plain" }
+                    onDrop={this.onDrop}>
+                    {({isDragReject}) => isDragReject ? "File type not supported" : "Drag & Drop csv here"}
+
+                </Dropzone>
                 <ul>{this.state.files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
             </form>
         );
