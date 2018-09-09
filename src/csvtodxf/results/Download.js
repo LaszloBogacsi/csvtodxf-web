@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {Button} from "semantic-ui-react";
 
 class Download extends Component {
     constructor(props) {
@@ -14,11 +15,9 @@ class Download extends Component {
 
 
     render() {
-        // const id = this.props.downloadId;
         return (
             <div>
-                {/*<a href={`http://localhost:9090/download/${id}`}>Download</a>*/}
-                <button onClick={this.handleOnclick}>Download</button>
+                <Button onClick={this.handleOnclick}>Download</Button>
             </div>
         );
 

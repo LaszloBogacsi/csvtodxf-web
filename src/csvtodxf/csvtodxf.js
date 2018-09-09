@@ -9,16 +9,27 @@ class CsvToDxf extends Component {
         this.handleConvertResponse = this.handleConvertResponse.bind(this);
 
         this.state = {
-            convertResponse: ''
+            convertResponse: '',
+            isConvertDone: false
         }
     }
 
     handleConvertResponse(response) {
-        this.setState({convertResponse: response})
+        this.setState({
+            isConvertDone: true,
+            convertResponse: response
+        })
     }
 
     render() {
         const convertResponse = this.state.convertResponse;
+        let isConvertComplete = this.state.isConvertDone;
+        let result;
+
+        if(isConvertComplete) {
+            result = <Result convertResponse={convertResponse}/>
+        }
+
         return (
             <Container textAlign='left' style={{width : 900}}>
                 <h2>CSV to DXF converter</h2>
@@ -29,7 +40,7 @@ class CsvToDxf extends Component {
                                 <InputData onConvertResponse={this.handleConvertResponse}/>
                             </Grid.Column>
                             <Grid.Column width={8} >
-                                <Result convertResponse={convertResponse}/>
+                                {result}
                             </Grid.Column>
                     </Grid.Row>
                 </Grid>

@@ -8,10 +8,12 @@ class InputData extends Component {
         this.handleFileNameChange = this.handleFileNameChange.bind(this);
         this.handleDrawingIdChange = this.handleDrawingIdChange.bind(this);
         this.handleConvertResponse = this.handleConvertResponse.bind(this);
+        this.handleUploadFinished = this.handleUploadFinished.bind(this);
 
         this.state = {
             drawingId: '',
-            fileName: ''
+            fileName: '',
+            uploadDone: false,
         }
     }
 
@@ -26,13 +28,25 @@ class InputData extends Component {
     handleConvertResponse(convertResponse) {
         this.props.onConvertResponse(convertResponse);
     }
+
+    handleUploadFinished(isDone) {
+        console.log("hanlde upload called");
+        this.setState({uploadDone: isDone});
+    }
     render() {
         let fileName = this.state.fileName;
         let drawingId = this.state.drawingId;
+        let isUploadComplete = this.state.uploadDone;
+        let drawingConfig;
+
+        if (isUploadComplete) {
+            drawingConfig =  <DrawingConfig fileName={fileName} drawingId={drawingId} onConvertResponse={this.handleConvertResponse}/>
+        }
+
         return (
             <div>
-                <Fileupload onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
-                <DrawingConfig fileName={fileName} drawingId={drawingId} onConvertResponse={this.handleConvertResponse}/>
+                <Fileupload onUploadFinished={this.handleUploadFinished} onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
+                {drawingConfig}
             </div>
         );
 

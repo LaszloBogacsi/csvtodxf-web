@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import * as Rx from "rxjs-compat";
-import {Button, Checkbox, Container, Dropdown, Grid, Input} from 'semantic-ui-react'
+import {Button, Checkbox, Form, Input, Select} from 'semantic-ui-react'
 
 
 class DrawingConfig extends Component {
@@ -68,67 +68,24 @@ class DrawingConfig extends Component {
     render() {
         return (
             <div>
-                <form onSubmit={this.handleSubmit}>
-                    <Container>
-                        <Grid>
-                        <Grid.Row verticalAlign='middle'>
-                            <Grid.Column width={4}>
-                                <p>Separator</p>
-                            </Grid.Column>
-                            <Grid.Column width={5}>
-                                <Dropdown fluid selection options={this.separators} onChange={this.handleChange} value={this.state.separator} name="separator"/>
-                            </Grid.Column>
-                            <Grid.Column width={6}>
-                                <Checkbox name="doPrint3D" onChange={this.handleChange} label="3D"/>
-                            </Grid.Column>
-                        </Grid.Row>
-                        </Grid>
-                    </Container>
-                    <div>
-                        <Grid>
-                            <Grid.Row>
-                                <Grid.Column verticalAlign='middle' width={4}>
-                                    <p>Text Height</p>
-                                </Grid.Column>
-                                <Grid.Column width={5}>
-                                    <Input fluid type="text" name="textHeight" value={this.state.textHeight}
-                                           onChange={this.handleChange}/>
+                <Form onSubmit={this.handleSubmit}>
+                    <Form.Group widths="equal">
+                        <Form.Field name="separator" control={Select} options={this.separators} label="Separator" onChange={this.handleChange} value={this.state.separator}/>
+                        <Form.Field name="textHeight" control={Input} label="Text Height" value={this.state.textHeight} onChange={this.handleChange}/>
+                    </Form.Group>
+                    <Form.Field name="3D" control={Checkbox} label="3D" onChange={this.handleChange}/>
+                    <label>What to show on drawing</label>
+                    <Form.Group grouped>
+                        <Form.Field  name="doPrintId" control={Checkbox} onChange={this.handleChange} label="Point Number" defaultChecked/>
+                        <Form.Field  name="doPrintHeight" control={Checkbox} onChange={this.handleChange} label="Height" defaultChecked/>
+                        <Form.Field  name="doPrintCoords" control={Checkbox} onChange={this.handleChange} label="Coordinate"/>
+                        <Form.Field  name="doPrintCode" control={Checkbox} onChange={this.handleChange} label="Code"/>
+                        <Form.Field  name="doLayerByCode" control={Checkbox} onChange={this.handleChange} label="Layer By Code"/>
 
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </div>
-                    <Container>
-                        <Grid columns={1}>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Checkbox name="doPrintId" onChange={this.handleChange} label="Point Number"/>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Checkbox name="doPrintHeight" onChange={this.handleChange} label="Height"/>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Checkbox name="doPrintCoords" onChange={this.handleChange} label="Coordinate"/>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Checkbox name="doPrintCode" onChange={this.handleChange} label="Code"/>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Checkbox name="doLayerByCode" onChange={this.handleChange} label="Layer By Code"/>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </Container>
-                    <Button type="submit" content="Go" primary/>
-                </form>
+
+                    </Form.Group>
+                    <Form.Field primary control={Button}>Convert</Form.Field>
+                </Form>
             </div>
         );
 

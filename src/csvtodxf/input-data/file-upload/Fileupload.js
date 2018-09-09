@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import * as Rx from "rxjs-compat";
 import Dropzone from "react-dropzone";
-import {Input} from "semantic-ui-react";
-import styles from "./dropzone.css"
+import styles from "./dropzone.css";
+import axios from "axios";
 
 class Fileupload extends Component {
 
@@ -18,30 +17,36 @@ class Fileupload extends Component {
         this.onDrop = this.onDrop.bind(this);
     }
 
-    handleChange(event) {
-        const file = event.target.files[0];
-        this.setState({value: file.name});
-        this.handleSubmit(file);
-    }
-
     handleSubmit(file) {
         this.props.onFileNameChange(file.name);
         let data = new FormData();
         data.append("file", file);
         const url = 'http://localhost:9090/upload-file';
-        Rx.Observable.fromPromise(fetch(url, {
-            method: 'POST',
+        axios.post(url, data, {
             headers: {
                 'Accept': 'application/json',
             },
-            body: data
-        })).flatMap(res => res.json())
-            .subscribe(response => {
-                this.props.onDrawingIdChange(response.id);
-                console.log(response);
-                },
-                error => console.log(error)
-            )
+            onUploadProgress: (progressEvent => {
+                console.log(progressEvent);
+                if (progressEvent.lengthComputable) {
+                    //update progressbar here
+                }
+            })
+        }).then(response => {
+            this.props.onUploadFinished(true);
+            this.props.onDrawingIdChange(response.data.id);
+            console.log(response);
+        })
+        .catch(error => {
+            console.log(error);
+            this.props.onUploadFinished(false);
+        })
+    }
+
+    handleChange(event) {
+        const file = event.target.files[0];
+        this.setState({value: file.name});
+        this.handleSubmit(file);
     }
 
     onDragEnter() {
@@ -67,22 +72,21 @@ class Fileupload extends Component {
         const oneFile = this.state.files[0];
         if (oneFile) this.handleSubmit(oneFile);
     }
+
     render() {
         let className = styles.dropZone;
         if (this.state.dropzoneActive) className += ' ' + styles.onDragActive;
         return (
             <form>
-                <label>Select a csv file form your computer</label>
-                <Input fluid type="file" name="upload" accept=".csv, .txt"  onChange={this.handleChange}/>
                 <Dropzone
                     className={className}
                     acceptClassName={styles.accepted}
                     rejectClassName={styles.rejected}
                     onDragEnter={this.onDragEnter.bind(this)}
                     onDragLeave={this.onDragLeave.bind(this)}
-                    accept={"application/vnd.ms-excel, text/plain" }
+                    accept={"application/vnd.ms-excel, text/plain"}
                     onDrop={this.onDrop}>
-                    {({isDragReject}) => isDragReject ? "File type not supported" : "Drag & Drop csv here"}
+                    {({isDragReject}) => isDragReject ? "File type not supported" : "Drag & Drop or click to select csv file"}
 
                 </Dropzone>
                 <ul>{this.state.files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
