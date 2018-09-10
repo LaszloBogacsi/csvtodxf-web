@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Fileupload from "./file-upload/Fileupload";
 import DrawingConfig from "./drawing-config/DrawingConfig";
+import ProgressStep from "../Shared/ProgressStep";
 
 class InputData extends Component {
     constructor(props) {
@@ -45,8 +46,12 @@ class InputData extends Component {
 
         return (
             <div>
-                <Fileupload onUploadFinished={this.handleUploadFinished} onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
-                {drawingConfig}
+                <ProgressStep stepNo='1'>
+                    <Fileupload onUploadFinished={this.handleUploadFinished} onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
+                </ProgressStep>
+                <ProgressStep stepNo='2'>
+                    {drawingConfig}
+                </ProgressStep>
             </div>
         );
 
