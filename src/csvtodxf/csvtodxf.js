@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import InputData from "./input-data/InputData";
 import Result from "./results/Result";
-import {Container, Grid} from "semantic-ui-react";
+import {Container, Grid, Step} from "semantic-ui-react";
+import { Router, Route, Switch } from 'react-router'
+
 
 class CsvToDxf extends Component {
     constructor(props) {
@@ -44,6 +46,29 @@ class CsvToDxf extends Component {
                             </Grid.Column>
                     </Grid.Row>
                 </Grid>
+
+                <Step.Group ordered vertical>
+                    <Step completed={false} active={true}>
+                        <Step.Content>
+                            <Step.Title>Upload</Step.Title>
+                            <Step.Description>Upload your csv file</Step.Description>
+                        </Step.Content>
+                    </Step>
+                    <Step completed={false} active={false}>
+                        <Step.Content>
+                            <Step.Title>Set Options</Step.Title>
+                            <Step.Description>Choose drawing options</Step.Description>
+                        </Step.Content>
+                    </Step>
+
+                    <Step completed={false} active={false}>
+                        <Step.Content>
+                            <Step.Title>Download</Step.Title>
+                            <Step.Description>Download converted drawing</Step.Description>
+                        </Step.Content>
+                    </Step>
+
+                </Step.Group>
 
             </Container>
         );
