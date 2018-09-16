@@ -5,8 +5,9 @@ import {Table} from "semantic-ui-react";
 class Result extends Component {
 
     render() {
-        // const response = this.state.convertResponse;
-        const response = this.props.convertResponse.response;
+        let onProgress = this.props.onProgress;
+        const
+        response = this.props.convertResponse.response;
         return (
             <div>
                 <h2>Conversion Results</h2>
@@ -27,7 +28,7 @@ class Result extends Component {
                         </Table.Row>
                     </Table.Body>
                 </Table>
-                <Download downloadId={response.downloadId}/>
+                <Download downloadId={response.downloadId} onProgress={onProgress}/>
             </div>
 
         )

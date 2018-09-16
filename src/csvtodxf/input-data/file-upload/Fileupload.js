@@ -21,11 +21,17 @@ class Fileupload extends Component {
         return initialState;
     };
 
+    toggleLoader() {
+        this.props.onToggleLoader();
+    }
+
     handleSubmit(file) {
         this.props.onFileNameChange(file.name);
         let data = new FormData();
         data.append("file", file);
         const url = 'http://localhost:9090/upload-file';
+        this.toggleLoader();
+        setTimeout(() => {
         axios.post(url, data, {
             headers: {
                 'Accept': 'application/json',
@@ -40,11 +46,12 @@ class Fileupload extends Component {
             this.props.onUploadFinished(true);
             this.props.onDrawingIdChange(response.data.id);
             console.log(response);
+            this.toggleLoader();
         })
         .catch(error => {
             console.log(error);
             this.props.onUploadFinished(false);
-        })
+        })}, 2000)
     }
 
     handleChange(event) {

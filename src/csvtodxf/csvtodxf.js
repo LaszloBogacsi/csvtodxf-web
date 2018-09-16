@@ -1,10 +1,8 @@
 import React, {Component} from 'react'
 import InputData from "./input-data/InputData";
 import Result from "./results/Result";
-import {Button, Container, Grid} from "semantic-ui-react";
+import {Button, Container, Dimmer, Grid, Loader, Segment} from "semantic-ui-react";
 import ProgressHeader from "./progress-header/ProgressHeader";
-
-
 
 
 class CsvToDxf extends Component {
@@ -15,6 +13,7 @@ class CsvToDxf extends Component {
         this.finishStep = this.finishStep.bind(this);
         this.handleProgress = this.handleProgress.bind(this);
         this.restartConverter = this.restartConverter.bind(this);
+        this.toggleLoader = this.toggleLoader.bind(this);
         this.state = this.getInitialState();
     }
 
@@ -22,6 +21,8 @@ class CsvToDxf extends Component {
         const initialState = {
             convertResponse: '',
             isConvertDone: false,
+            loaderActive: false,
+
             step1IsDone: false,
             step1Active: true,
             step1Disabled: false,
@@ -31,6 +32,7 @@ class CsvToDxf extends Component {
             step3IsDone: false,
             step3Active: false,
             step3Disabled: true,
+
         };
 
         return initialState;
@@ -45,15 +47,20 @@ class CsvToDxf extends Component {
         this.handleProgress(3);
     }
 
+    toggleLoader() {
+        this.setState({loaderActive: !this.state.loaderActive})
+    }
+
     handleProgress(stepNumber) {
-        console.log('called');
         const MAX_NUMBER_OF_STEPS = 3;
         if (stepNumber <= MAX_NUMBER_OF_STEPS) {
             this.finishStep(stepNumber - 1);
             this.progressAhead(stepNumber);
         }
+        if (stepNumber === MAX_NUMBER_OF_STEPS + 1) {
+            this.finishStep(stepNumber -1);
+        }
     };
-
 
 
     progressAhead(stepNumber) {
@@ -73,9 +80,8 @@ class CsvToDxf extends Component {
     };
 
     restartConverter() {
-        console.log("resetting from main component");
         this.resetThisState();
-        this.inputData.resetState();
+        if (this.inputData) this.inputData.resetState();
     }
 
     resetThisState() {
@@ -85,21 +91,25 @@ class CsvToDxf extends Component {
     render() {
         const convertResponse = this.state.convertResponse;
         let isConvertComplete = this.state.isConvertDone;
-        let reset = this.state.reset;
-        let result;
-        console.log(isConvertComplete);
-        console.log(this.state);
-
-        if(isConvertComplete) {
-            console.log("From here");
-            result = <Result convertResponse={convertResponse}/>
-        }
-        let step1 = {active : this.state.step1Active, isDone: this.state.step1IsDone, disabled: this.state.step1Disabled};
-        let step2 = {active: this.state.step2Active, isDone: this.state.step2IsDone, disabled: this.state.step2Disabled};
-        let step3 = {active: this.state.step3Active, isDone: this.state.step3IsDone, disabled: this.state.step3Disabled};
+        let loaderActive = this.state.loaderActive;
+        let step1 = {
+            active: this.state.step1Active,
+            isDone: this.state.step1IsDone,
+            disabled: this.state.step1Disabled
+        };
+        let step2 = {
+            active: this.state.step2Active,
+            isDone: this.state.step2IsDone,
+            disabled: this.state.step2Disabled
+        };
+        let step3 = {
+            active: this.state.step3Active,
+            isDone: this.state.step3IsDone,
+            disabled: this.state.step3Disabled
+        };
 
         return (
-            <Container textAlign='left' style={{width : 700}}>
+            <Container textAlign='left' style={{width: 700}}>
                 <h2>CSV to DXF converter</h2>
                 <h4>Convert csv survey data to Cad drawing</h4>
                 <Grid>
@@ -107,11 +117,28 @@ class CsvToDxf extends Component {
                         <ProgressHeader stepOne={step1} stepTwo={step2} stepThree={step3}/>
                     </Grid.Row>
                     <Grid.Row>
-                        <InputData ref={inputData => this.inputData = inputData} onReset={reset} onProgress={this.handleProgress} onConvertResponse={this.handleConvertResponse}/>
-                        {result}
+                        <Container>
+                            <Segment raised>
+                                <Dimmer active={loaderActive}>
+                                    <Loader content='Loading'/>
+
+                                </Dimmer>
+                                {!isConvertComplete ? (
+                                    <InputData ref={inputData => this.inputData = inputData}
+                                               onToggleLoader={this.toggleLoader}
+                                               onProgress={this.handleProgress}
+                                               onConvertResponse={this.handleConvertResponse}/>
+                                ) : (
+                                    <Result convertResponse={convertResponse} onProgress={this.handleProgress}/>
+                                )}
+                            </Segment>
+
+                            <Button onClick={this.restartConverter}>New Convert</Button>
+
+                        </Container>
+
                     </Grid.Row>
                 </Grid>
-                <Button onClick={this.restartConverter}>New Convert</Button>
             </Container>
         );
 

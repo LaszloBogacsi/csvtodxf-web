@@ -31,24 +31,33 @@ class DrawingConfig extends Component {
 
     }
 
+    toggleLoader() {
+        this.props.onToggleLoader();
+    }
+
+
     handleSubmit(event) {
         event.preventDefault();
         const requestBody = JSON.stringify(this.state);
         const url = 'http://localhost:9090/convert';
-        Rx.Observable.fromPromise(fetch(url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: requestBody
-        })).flatMap(res => res.json())
-            .subscribe(response => {
-                this.props.onConvertResponse(response);
-                    console.log(response)
+        this.toggleLoader();
+        setTimeout(() => {
+            Rx.Observable.fromPromise(fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                error => console.log(error)
-            )
+                body: requestBody
+            })).flatMap(res => res.json())
+                .subscribe(response => {
+                        this.toggleLoader();
+                        this.props.onConvertResponse(response);
+                        console.log(response)
+                    },
+                    error => console.log(error)
+                )
+        }, 2000)
     }
 
     separators = [

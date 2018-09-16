@@ -10,6 +10,7 @@ class InputData extends Component {
         this.handleDrawingIdChange = this.handleDrawingIdChange.bind(this);
         this.handleConvertResponse = this.handleConvertResponse.bind(this);
         this.handleUploadFinished = this.handleUploadFinished.bind(this);
+        this.toggleLoader = this.toggleLoader.bind(this);
 
         this.state = this.getInitialState();
     }
@@ -42,26 +43,33 @@ class InputData extends Component {
 
     resetState() {
         this.setState(this.getInitialState);
-        this.fileUpload.resetState();
+        if (this.fileUpload) this.fileUpload.resetState();
     }
 
+    toggleLoader() {
+        this.props.onToggleLoader();
+    }
 
 
     render() {
         let fileName = this.state.fileName;
         let drawingId = this.state.drawingId;
         let isUploadComplete = this.state.uploadDone;
-        let reset = this.state.reset;
-        let drawingConfig;
-
-        if (isUploadComplete) {
-            drawingConfig =  <DrawingConfig fileName={fileName} drawingId={drawingId} onConvertResponse={this.handleConvertResponse}/>
-        }
 
         return (
             <Container fluid>
-                <Fileupload ref={fileUpload => this.fileUpload = fileUpload} onUploadFinished={this.handleUploadFinished} onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
-                {drawingConfig}
+                {!isUploadComplete ? (
+                    <Fileupload ref={fileUpload => this.fileUpload = fileUpload}
+                                onUploadFinished={this.handleUploadFinished}
+                                onToggleLoader={this.toggleLoader}
+                                onFileNameChange={this.handleFileNameChange}
+                                onDrawingIdChange={this.handleDrawingIdChange}/>
+
+                ) : (
+                    <DrawingConfig fileName={fileName} drawingId={drawingId}
+                                   onConvertResponse={this.handleConvertResponse}
+                                    onToggleLoader={this.toggleLoader}/>
+                )}
             </Container>
         );
 

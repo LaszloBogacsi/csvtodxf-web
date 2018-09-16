@@ -10,6 +10,7 @@ class Download extends Component {
     handleOnclick() {
         const id = this.props.downloadId;
         const url = `http://localhost:9090/download/${id}`;
+        this.props.onProgress(4);
         window.location.href = url;
     }
 
