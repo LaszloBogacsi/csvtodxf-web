@@ -7,15 +7,19 @@ class Fileupload extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            value: '',
-            files: [],
-            dropzoneActive: false
-        };
+        this.state = this.getInitialState();
 
         this.handleChange = this.handleChange.bind(this);
         this.onDrop = this.onDrop.bind(this);
     }
+
+    getInitialState = () => {
+        const initialState = {
+            files: [],
+            dropzoneActive: false
+        };
+        return initialState;
+    };
 
     handleSubmit(file) {
         this.props.onFileNameChange(file.name);
@@ -45,7 +49,6 @@ class Fileupload extends Component {
 
     handleChange(event) {
         const file = event.target.files[0];
-        this.setState({value: file.name});
         this.handleSubmit(file);
     }
 
@@ -73,8 +76,13 @@ class Fileupload extends Component {
         if (oneFile) this.handleSubmit(oneFile);
     }
 
+    resetState() {
+        this.setState(this.getInitialState());
+    }
+
     render() {
         let className = styles.dropZone;
+        let files = this.state.files;
         if (this.state.dropzoneActive) className += ' ' + styles.onDragActive;
         return (
             <form>
@@ -84,12 +92,12 @@ class Fileupload extends Component {
                     rejectClassName={styles.rejected}
                     onDragEnter={this.onDragEnter.bind(this)}
                     onDragLeave={this.onDragLeave.bind(this)}
-                    accept={"application/vnd.ms-excel, text/plain"}
+                    accept={"application/vnd.ms-excel, text/plain, text/csv"}
                     onDrop={this.onDrop}>
                     {({isDragReject}) => isDragReject ? "File type not supported" : "Drag & Drop or click to select csv file"}
 
                 </Dropzone>
-                <ul>{this.state.files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
+                <ul>{files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
             </form>
         );
 

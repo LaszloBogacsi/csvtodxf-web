@@ -11,12 +11,17 @@ class InputData extends Component {
         this.handleConvertResponse = this.handleConvertResponse.bind(this);
         this.handleUploadFinished = this.handleUploadFinished.bind(this);
 
-        this.state = {
+        this.state = this.getInitialState();
+    }
+
+    getInitialState = () => {
+        const initialState = {
             drawingId: '',
             fileName: '',
             uploadDone: false,
-        }
-    }
+        };
+        return initialState;
+    };
 
     handleFileNameChange(fileName) {
         this.setState({fileName: fileName})
@@ -35,20 +40,27 @@ class InputData extends Component {
         this.props.onProgress(2);
     }
 
+    resetState() {
+        this.setState(this.getInitialState);
+        this.fileUpload.resetState();
+    }
+
+
+
     render() {
         let fileName = this.state.fileName;
         let drawingId = this.state.drawingId;
         let isUploadComplete = this.state.uploadDone;
+        let reset = this.state.reset;
         let drawingConfig;
 
         if (isUploadComplete) {
-        // if (true) {
             drawingConfig =  <DrawingConfig fileName={fileName} drawingId={drawingId} onConvertResponse={this.handleConvertResponse}/>
         }
 
         return (
             <Container fluid>
-                <Fileupload onUploadFinished={this.handleUploadFinished} onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
+                <Fileupload ref={fileUpload => this.fileUpload = fileUpload} onUploadFinished={this.handleUploadFinished} onFileNameChange={this.handleFileNameChange} onDrawingIdChange={this.handleDrawingIdChange}/>
                 {drawingConfig}
             </Container>
         );

@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import InputData from "./input-data/InputData";
 import Result from "./results/Result";
-import {Container, Grid} from "semantic-ui-react";
+import {Button, Container, Grid} from "semantic-ui-react";
 import ProgressHeader from "./progress-header/ProgressHeader";
+
+
 
 
 class CsvToDxf extends Component {
@@ -12,7 +14,12 @@ class CsvToDxf extends Component {
         this.progressAhead = this.progressAhead.bind(this);
         this.finishStep = this.finishStep.bind(this);
         this.handleProgress = this.handleProgress.bind(this);
-        this.state = {
+        this.restartConverter = this.restartConverter.bind(this);
+        this.state = this.getInitialState();
+    }
+
+    getInitialState = () => {
+        const initialState = {
             convertResponse: '',
             isConvertDone: false,
             step1IsDone: false,
@@ -23,9 +30,11 @@ class CsvToDxf extends Component {
             step2Disabled: true,
             step3IsDone: false,
             step3Active: false,
-            step3Disabled: true
-        }
-    }
+            step3Disabled: true,
+        };
+
+        return initialState;
+    };
 
     handleConvertResponse(response) {
         this.setState({
@@ -63,12 +72,26 @@ class CsvToDxf extends Component {
         })
     };
 
+    restartConverter() {
+        console.log("resetting from main component");
+        this.resetThisState();
+        this.inputData.resetState();
+    }
+
+    resetThisState() {
+        this.setState(this.getInitialState());
+    }
+
     render() {
         const convertResponse = this.state.convertResponse;
         let isConvertComplete = this.state.isConvertDone;
+        let reset = this.state.reset;
         let result;
+        console.log(isConvertComplete);
+        console.log(this.state);
 
         if(isConvertComplete) {
+            console.log("From here");
             result = <Result convertResponse={convertResponse}/>
         }
         let step1 = {active : this.state.step1Active, isDone: this.state.step1IsDone, disabled: this.state.step1Disabled};
@@ -84,10 +107,11 @@ class CsvToDxf extends Component {
                         <ProgressHeader stepOne={step1} stepTwo={step2} stepThree={step3}/>
                     </Grid.Row>
                     <Grid.Row>
-                        <InputData onProgress={this.handleProgress} onConvertResponse={this.handleConvertResponse}/>
+                        <InputData ref={inputData => this.inputData = inputData} onReset={reset} onProgress={this.handleProgress} onConvertResponse={this.handleConvertResponse}/>
                         {result}
                     </Grid.Row>
                 </Grid>
+                <Button onClick={this.restartConverter}>New Convert</Button>
             </Container>
         );
 

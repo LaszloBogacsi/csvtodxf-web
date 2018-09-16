@@ -3,25 +3,6 @@ import Download from "./Download";
 import {Table} from "semantic-ui-react";
 
 class Result extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            convertResponse:
-                {downloadId: props.convertResponse.downloadId,
-                durationInMillies: props.convertResponse.durationInMillies,
-                fileSize: props.convertResponse.fileSize,
-                numberOfLinesConverted: props.convertResponse.numberOfLinesConverted
-                }
-
-        }
-    }
-
-    // componentWillReceiveProps(nextProps) {
-    //     console.log(nextProps);
-    //     if (nextProps.convertResponse.response !== this.state.convertResponse) {
-    //         this.setState({convertResponse: nextProps.convertResponse.response});
-    //     }
-    // }
 
     render() {
         // const response = this.state.convertResponse;

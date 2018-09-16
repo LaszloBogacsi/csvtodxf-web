@@ -11,7 +11,6 @@ class ProgressHeader extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps !== this.state) {
-            console.log('here');
             this.setState(nextProps);
         }
     }
