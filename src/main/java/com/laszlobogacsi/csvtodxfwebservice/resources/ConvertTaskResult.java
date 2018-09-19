@@ -13,4 +13,6 @@ public class ConvertTaskResult {
     private long durationInMillies;
     @JsonProperty
     private double fileSize;
+    @JsonProperty
+    private JobResult jobResult;
 }

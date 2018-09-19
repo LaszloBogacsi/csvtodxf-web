@@ -16,7 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @RestController
@@ -36,36 +37,49 @@ public class ConvertFileController {
     @RequestMapping("/convert")
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
-        String jsonResponse = null;
-        try {
-            JobResponse response = manager.start(new ConvertJob(config.getDrawingId().toString(), config));
-            ConvertTaskResult result = ConvertTaskResult.builder()
-                    .downloadId(response.getDownloadId())
-                    .durationInMillies(response.getReport().getDurationInMillies())
-                    .fileSize(response.getReport().getFileSize())
-                    .numberOfLinesConverted(response.getReport().getNumberOfLinesConverted())
+        String convertJobId = UUID.randomUUID().toString();
+        System.out.println("ConvertJob start");
+        manager.start(new ConvertJob(convertJobId, config));
+        System.out.println("return jobId");
+        return ResponseEntity
+                .status(202)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"response\":\"" + convertJobId + "\"}");
+    }
+
+    @CrossOrigin(origins = "http://evil.com/")
+    @RequestMapping("/convert/status/{convertJobId}")
+    @GetMapping
+    ResponseEntity status(@PathVariable String convertJobId) {
+        System.out.println("endpoint called");
+        Optional<ConvertTask> optionalTask = convertTaskRepository.findByJobId(convertJobId);
+        System.out.println("task found");
+        ConvertTaskResult result;
+        if (optionalTask.isPresent()) {
+            ConvertTask task = optionalTask.get();
+            result = ConvertTaskResult.builder()
+                    .jobResult(task.getResult())
+                    .downloadId(task.getDownloadId())
+                    .durationInMillies(task.getReport().getDurationInMillies())
+                    .fileSize(task.getReport().getFileSize())
+                    .numberOfLinesConverted(task.getReport().getNumberOfLinesConverted())
                     .build();
-            jsonResponse = JsonMapper.fromObj(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(500)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"response\":\"" + Arrays.toString(e.getStackTrace()) + "\"}");
+        } else {
+            result = ConvertTaskResult.builder().jobResult(JobResult.IN_PROGRESS).build();
         }
 
         return ResponseEntity
                 .status(200)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"response\":" + jsonResponse + "}");
+                .body(JsonMapper.fromObj(result));
     }
 
-    @RequestMapping("/download/{id}") // this is should be the job id
+    @RequestMapping("/download/{downloadId}") // this is should be the job id
     @GetMapping
-    ResponseEntity download(@PathVariable String id) {
-        ConvertTask convertTask = convertTaskRepository.findByDownloadId(id).get();
+    ResponseEntity download(@PathVariable String downloadId) {
+        ConvertTask convertTask = convertTaskRepository.findByDownloadId(downloadId).get();
         Resource resource = fileStorageService.loadFileAsResource(convertTask.getDownloadPath());
-        System.out.println("id = " + id);
+        System.out.println("downloadId = " + downloadId);
         System.out.println("convertTask = " + convertTask.getDownloadPath());
         ResponseEntity response = ResponseEntity
                 .status(HttpStatus.OK)

@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface ConvertTaskRepository extends CrudRepository<ConvertTask, Long> {
 
     Optional<ConvertTask> findByDownloadId(String downloadId);
+    Optional<ConvertTask> findByJobId(String jobId);
 
 }

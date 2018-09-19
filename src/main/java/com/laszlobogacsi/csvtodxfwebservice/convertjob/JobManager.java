@@ -30,12 +30,14 @@ public class JobManager {
 
     public JobResponse start(ConvertJob job) {
         try {
-            final JobResponse jobResponse = executorService.executeJobInParallel(job).get(5, TimeUnit.SECONDS);
+            final JobResponse jobResponse = executorService.executeJob(job).get(1, TimeUnit.SECONDS);
             final FileCompressionInfo fileCompressionInfo = createFrom(jobResponse.getReport());
             compress(fileCompressionInfo);
             save(jobResponse, fileCompressionInfo);
+            System.out.println("job saved");
             return jobResponse;
-        } catch (JobExecutionException | InterruptedException | ExecutionException | TimeoutException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            System.out.println(e);
             return new JobResponse(job.getJobId(), "0", ConversionReport.builder().build(), JobResult.CONVERSION_ERROR);
         }
 
@@ -55,8 +57,10 @@ public class JobManager {
 
     private void save(JobResponse jobResponse, FileCompressionInfo fileCompressionInfo) {
         convertTaskRepository.save(ConvertTask.builder()
+                .result(jobResponse.getResult())
                 .downloadId(jobResponse.getDownloadId())
                 .jobId(jobResponse.getJobId())
+                .report(jobResponse.getReport())
                 .downloadPath(fileCompressionInfo.getCompressedFilePath())
                 .build());
     }
