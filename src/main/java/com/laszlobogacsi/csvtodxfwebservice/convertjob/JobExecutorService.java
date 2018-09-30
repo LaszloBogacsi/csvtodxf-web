@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -32,6 +33,10 @@ public class JobExecutorService {
         fileReader = new CsvFileReader();
     }
 
+    CompletableFuture<JobResponse> executeAsyncJob(ConvertJob job) {
+        return CompletableFuture.supplyAsync(() -> execute(job), executorService);
+    }
+
     Future<JobResponse> executeJob(ConvertJob job) {
         return executorService.submit(() -> execute(job));
     }
@@ -39,7 +44,6 @@ public class JobExecutorService {
     private JobResponse execute(ConvertJob job) {
         Converter converter = new CsvToDxfConverter(fileReader, pathProvider);
         try {
-            Thread.currentThread().sleep(5000);
             ConversionReport report = converter.convert(job.config);
             return new JobResponse(job.getJobId(), generateDownloadId(), report, JobResult.SUCCESS);
         } catch (Exception e) {

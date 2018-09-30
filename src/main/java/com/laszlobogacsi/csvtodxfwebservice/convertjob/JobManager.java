@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Service
 public class JobManager {
@@ -28,19 +26,14 @@ public class JobManager {
         this.convertTaskRepository = convertTaskRepository;
     }
 
-    public JobResponse start(ConvertJob job) {
-        try {
-            final JobResponse jobResponse = executorService.executeJob(job).get(1, TimeUnit.SECONDS);
-            final FileCompressionInfo fileCompressionInfo = createFrom(jobResponse.getReport());
-            compress(fileCompressionInfo);
-            save(jobResponse, fileCompressionInfo);
+    public void start(ConvertJob job) {
+            executorService.executeAsyncJob(job)
+                    .thenAcceptAsync(response -> {
+                        final FileCompressionInfo fileCompressionInfo = createFrom(response.getReport());
+                        compress(fileCompressionInfo);
+                        save(response, fileCompressionInfo);
+            });
             System.out.println("job saved");
-            return jobResponse;
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(e);
-            return new JobResponse(job.getJobId(), "0", ConversionReport.builder().build(), JobResult.CONVERSION_ERROR);
-        }
-
     }
 
     private void compress(FileCompressionInfo compressionInfo) {
