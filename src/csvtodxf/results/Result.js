@@ -6,8 +6,7 @@ class Result extends Component {
 
     render() {
         let onProgress = this.props.onProgress;
-        const
-        response = this.props.convertResponse.response;
+        const response = this.props.convertResponse;
         return (
             <div>
                 <h2>Conversion Results</h2>

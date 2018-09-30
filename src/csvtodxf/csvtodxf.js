@@ -3,6 +3,7 @@ import InputData from "./input-data/InputData";
 import Result from "./results/Result";
 import {Button, Container, Dimmer, Grid, Loader, Segment} from "semantic-ui-react";
 import ProgressHeader from "./progress-header/ProgressHeader";
+import axios from "axios/index";
 
 
 class CsvToDxf extends Component {
@@ -39,12 +40,40 @@ class CsvToDxf extends Component {
     };
 
     handleConvertResponse(response) {
-        this.setState({
-            isConvertDone: true,
-            convertResponse: response,
+        console.log(response);
+        let retryCount = 0;
+        this.checkConvertStatus(response.response, retryCount);
 
-        });
-        this.handleProgress(3);
+    }
+
+    checkConvertStatus(convertJobId, numOfretries) {
+        const url = `http://localhost:9090/convert/status/${convertJobId}`;
+        console.log("sending request with " + convertJobId);
+        axios.get(url, {
+            headers: {
+                'Accept': 'application/json',
+            }
+        }).then(response => {
+            if (response.data.jobResult === 'SUCCESS') {
+                console.log(response.data.jobResult);
+                this.setState({
+                    isConvertDone: true,
+                    convertResponse: response.data,
+
+                });
+                this.handleProgress(3);
+            } else if (numOfretries < 5) {
+                const numOfTries = numOfretries + 1;
+                this.checkConvertStatus(convertJobId, numOfTries);
+                console.log("not done yet: " + numOfretries);
+            } else {
+                console.log("Something went wong plese retry"); // display to user.
+            }
+            console.log(response);
+        })
+            .catch(error => {
+                console.log(error);
+            })
     }
 
     toggleLoader() {
@@ -58,7 +87,7 @@ class CsvToDxf extends Component {
             this.progressAhead(stepNumber);
         }
         if (stepNumber === MAX_NUMBER_OF_STEPS + 1) {
-            this.finishStep(stepNumber -1);
+            this.finishStep(stepNumber - 1);
         }
     };
 

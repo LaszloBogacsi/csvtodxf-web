@@ -51,7 +51,7 @@ class Fileupload extends Component {
         .catch(error => {
             console.log(error);
             this.props.onUploadFinished(false);
-        })}, 2000)
+        })}, 1000)
     }
 
     handleChange(event) {
