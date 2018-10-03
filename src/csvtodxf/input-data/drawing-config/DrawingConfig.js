@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import * as Rx from "rxjs-compat";
 import {Button, Checkbox, Form, Input, Select} from 'semantic-ui-react'
+import {httpModule as http} from "../../shared/httpModule";
 
 
 class DrawingConfig extends Component {
@@ -11,10 +11,10 @@ class DrawingConfig extends Component {
             fileName: this.props.fileName,
             separator: this.separators[0].value,
             textHeight: 1.0,
-            doPrintId: false,
+            doPrintId: true,
             doPrintCoords: false,
             doPrintCode: false,
-            doPrintHeight: false,
+            doPrintHeight: true,
             doPrint3D: true,
             doLayerByCode: false
 
@@ -39,25 +39,21 @@ class DrawingConfig extends Component {
     handleSubmit(event) {
         event.preventDefault();
         const requestBody = JSON.stringify(this.state);
-        const url = 'http://localhost:9090/convert';
+        const url = '/convert';
         this.toggleLoader();
-        setTimeout(() => {
-            Rx.Observable.fromPromise(fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: requestBody
-            })).flatMap(res => res.json())
-                .subscribe(response => {
-                        this.toggleLoader();
-                        this.props.onConvertResponse(response);
-                        console.log(response)
-                    },
-                    error => console.log(error)
-                )
-        }, 2000)
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
+        setTimeout( () => {
+        http.post(url, requestBody, config).then(response => {
+            console.log(response);
+            this.props.onConvertResponse(response.data);
+        }).catch(error => {
+            console.log(error);
+        })}, 1000);
     }
 
     separators = [
@@ -65,6 +61,7 @@ class DrawingConfig extends Component {
         {text: 'semicolon', value: ';'}
     ];
 
+    // Is this unnecessary? the component shows only when previous finished..
     componentWillReceiveProps(nextProps) {
         if (nextProps.fileName !== this.state.fileName) {
             this.setState({fileName: nextProps.fileName});
@@ -79,17 +76,23 @@ class DrawingConfig extends Component {
             <div>
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Group widths="equal">
-                        <Form.Field name="separator" control={Select} options={this.separators} label="Separator" onChange={this.handleChange} value={this.state.separator}/>
-                        <Form.Field name="textHeight" control={Input} label="Text Height" value={this.state.textHeight} onChange={this.handleChange}/>
+                        <Form.Field name="separator" control={Select} options={this.separators} label="Separator"
+                                    onChange={this.handleChange} value={this.state.separator}/>
+                        <Form.Field name="textHeight" control={Input} label="Text Height" value={this.state.textHeight}
+                                    onChange={this.handleChange}/>
                     </Form.Group>
                     <Form.Field name="3D" control={Checkbox} label="3D" onChange={this.handleChange}/>
                     <label>What to show on drawing</label>
                     <Form.Group grouped>
-                        <Form.Field  name="doPrintId" control={Checkbox} onChange={this.handleChange} label="Point Number" defaultChecked/>
-                        <Form.Field  name="doPrintHeight" control={Checkbox} onChange={this.handleChange} label="Height" defaultChecked/>
-                        <Form.Field  name="doPrintCoords" control={Checkbox} onChange={this.handleChange} label="Coordinate"/>
-                        <Form.Field  name="doPrintCode" control={Checkbox} onChange={this.handleChange} label="Code"/>
-                        <Form.Field  name="doLayerByCode" control={Checkbox} onChange={this.handleChange} label="Layer By Code"/>
+                        <Form.Field name="doPrintId" control={Checkbox} onChange={this.handleChange}
+                                    label="Point Number" defaultChecked/>
+                        <Form.Field name="doPrintHeight" control={Checkbox} onChange={this.handleChange} label="Height"
+                                    defaultChecked/>
+                        <Form.Field name="doPrintCoords" control={Checkbox} onChange={this.handleChange}
+                                    label="Coordinate"/>
+                        <Form.Field name="doPrintCode" control={Checkbox} onChange={this.handleChange} label="Code"/>
+                        <Form.Field name="doLayerByCode" control={Checkbox} onChange={this.handleChange}
+                                    label="Layer By Code"/>
 
 
                     </Form.Group>

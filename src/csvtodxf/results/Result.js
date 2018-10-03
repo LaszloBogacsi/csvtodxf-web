@@ -15,11 +15,11 @@ class Result extends Component {
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>Duration</Table.Cell>
-                            <Table.Cell>{response.durationInMillies < 1000 ? `${response.durationInMillies} ms` : `Math.round(response.durationInMillies / 1000) sec`}</Table.Cell>
+                            <Table.Cell>{response.durationInMillies < 1000 ? `${response.durationInMillies} ms` : `${Math.round(response.durationInMillies / 1000)} sec`}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>File size</Table.Cell>
-                            <Table.Cell>{response.fileSize} kb</Table.Cell>
+                            <Table.Cell>{Math.round(response.fileSize/1024)} kb</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>Lines converted</Table.Cell>

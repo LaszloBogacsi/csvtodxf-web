@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import Dropzone from "react-dropzone";
 import styles from "./dropzone.css";
-import axios from "axios";
+import {httpModule as http} from "../../shared/httpModule";
 
 class Fileupload extends Component {
 
@@ -27,12 +27,11 @@ class Fileupload extends Component {
 
     handleSubmit(file) {
         this.props.onFileNameChange(file.name);
+
         let data = new FormData();
         data.append("file", file);
-        const url = 'http://localhost:9090/upload-file';
-        this.toggleLoader();
-        setTimeout(() => {
-        axios.post(url, data, {
+        const url = '/upload-file';
+        let config = {
             headers: {
                 'Accept': 'application/json',
             },
@@ -42,16 +41,18 @@ class Fileupload extends Component {
                     //update progressbar here
                 }
             })
-        }).then(response => {
+        };
+        this.toggleLoader();
+        http.post(url, data, config).then(response => {
             this.props.onUploadFinished(true);
             this.props.onDrawingIdChange(response.data.id);
             console.log(response);
             this.toggleLoader();
-        })
-        .catch(error => {
+        }).catch(error => {
             console.log(error);
+            this.toggleLoader();
             this.props.onUploadFinished(false);
-        })}, 1000)
+        })
     }
 
     handleChange(event) {

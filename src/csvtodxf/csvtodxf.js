@@ -3,7 +3,7 @@ import InputData from "./input-data/InputData";
 import Result from "./results/Result";
 import {Button, Container, Dimmer, Grid, Loader, Segment} from "semantic-ui-react";
 import ProgressHeader from "./progress-header/ProgressHeader";
-import axios from "axios/index";
+import {httpModule as http} from "./shared/httpModule";
 
 
 class CsvToDxf extends Component {
@@ -15,6 +15,7 @@ class CsvToDxf extends Component {
         this.handleProgress = this.handleProgress.bind(this);
         this.restartConverter = this.restartConverter.bind(this);
         this.toggleLoader = this.toggleLoader.bind(this);
+        this.handleFileNameChange = this.handleFileNameChange.bind(this);
         this.state = this.getInitialState();
     }
 
@@ -27,6 +28,7 @@ class CsvToDxf extends Component {
             step1IsDone: false,
             step1Active: true,
             step1Disabled: false,
+            step1FileName: '',
             step2IsDone: false,
             step2Active: false,
             step2Disabled: true,
@@ -46,30 +48,39 @@ class CsvToDxf extends Component {
 
     }
 
+    handleFileNameChange(fileName) {
+        console.log(fileName);
+        this.setState({step1FileName: fileName})
+    }
+
     checkConvertStatus(convertJobId, numOfretries) {
-        const url = `http://localhost:9090/convert/status/${convertJobId}`;
+        const url = `/convert/status/${convertJobId}`;
         console.log("sending request with " + convertJobId);
-        axios.get(url, {
+        http.get(url, {
             headers: {
                 'Accept': 'application/json',
             }
         }).then(response => {
-            if (response.data.jobResult === 'SUCCESS') {
-                console.log(response.data.jobResult);
-                this.setState({
-                    isConvertDone: true,
-                    convertResponse: response.data,
+            setTimeout(() => {
+                if (response.data.jobResult === 'SUCCESS') {
+                    console.log(response.data.jobResult);
+                    this.setState({
+                        isConvertDone: true,
+                        convertResponse: response.data,
 
-                });
-                this.handleProgress(3);
-            } else if (numOfretries < 5) {
-                const numOfTries = numOfretries + 1;
-                this.checkConvertStatus(convertJobId, numOfTries);
-                console.log("not done yet: " + numOfretries);
-            } else {
-                console.log("Something went wong plese retry"); // display to user.
-            }
-            console.log(response);
+                    });
+                    this.toggleLoader();
+                    this.handleProgress(3);
+                } else if (numOfretries < 5) {
+                    const numOfTries = numOfretries + 1;
+                    this.checkConvertStatus(convertJobId, numOfTries); // recursive
+                    console.log("not done yet: " + numOfretries);
+                } else {
+                    console.log("Something went wong plese retry"); // display to user.
+                }
+                console.log(response);
+            }, 2000)
+
         })
             .catch(error => {
                 console.log(error);
@@ -124,7 +135,8 @@ class CsvToDxf extends Component {
         let step1 = {
             active: this.state.step1Active,
             isDone: this.state.step1IsDone,
-            disabled: this.state.step1Disabled
+            disabled: this.state.step1Disabled,
+            fileName: this.state.step1FileName
         };
         let step2 = {
             active: this.state.step2Active,
@@ -156,7 +168,8 @@ class CsvToDxf extends Component {
                                     <InputData ref={inputData => this.inputData = inputData}
                                                onToggleLoader={this.toggleLoader}
                                                onProgress={this.handleProgress}
-                                               onConvertResponse={this.handleConvertResponse}/>
+                                               onConvertResponse={this.handleConvertResponse}
+                                               onFileNameChange={this.handleFileNameChange}/>
                                 ) : (
                                     <Result convertResponse={convertResponse} onProgress={this.handleProgress}/>
                                 )}

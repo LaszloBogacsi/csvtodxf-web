@@ -25,7 +25,8 @@ class InputData extends Component {
     };
 
     handleFileNameChange(fileName) {
-        this.setState({fileName: fileName})
+        this.setState({fileName: fileName});
+        this.props.onFileNameChange(fileName);
     }
 
     handleDrawingIdChange(drawingId) {
@@ -38,7 +39,7 @@ class InputData extends Component {
 
     handleUploadFinished(isDone) {
         this.setState({uploadDone: isDone});
-        this.props.onProgress(2);
+        if (isDone) this.props.onProgress(2);
     }
 
     resetState() {

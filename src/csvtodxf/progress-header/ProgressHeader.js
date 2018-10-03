@@ -16,8 +16,9 @@ class ProgressHeader extends Component {
     }
 
     render() {
-        let isUploadComplete = this.state.isUploadComplete;
-        let fileName = this.state.fileName;
+        let isUploadComplete = this.state.stepOne.isDone;
+        let fileName = this.state.stepOne.fileName;
+        console.log(fileName);
         return (
             <Step.Group fluid >
                 <Step disabled={this.state.stepOne.disabled} completed={this.state.stepOne.isDone} active={this.state.stepOne.active}>
