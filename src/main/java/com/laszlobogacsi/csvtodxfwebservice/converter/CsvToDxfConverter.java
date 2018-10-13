@@ -53,6 +53,6 @@ public class CsvToDxfConverter implements Converter {
     }
 
     private String getDxfFileName(String originalFileName) {
-        return originalFileName.replaceAll("\\.csv", ".dxf");
+        return originalFileName.replaceAll("\\.\\w+$", ".dxf");
     }
 }
