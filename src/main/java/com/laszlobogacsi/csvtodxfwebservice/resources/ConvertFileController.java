@@ -33,7 +33,7 @@ public class ConvertFileController {
     @Autowired
     private ConvertTaskRepository convertTaskRepository;
 
-    @CrossOrigin(origins = "http://evil.com/")
+    @CrossOrigin
     @RequestMapping("/convert")
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
@@ -47,7 +47,7 @@ public class ConvertFileController {
                 .body("{\"response\":\"" + convertJobId + "\"}");
     }
 
-    @CrossOrigin(origins = "http://evil.com/")
+    @CrossOrigin
     @RequestMapping("/convert/status/{convertJobId}")
     @GetMapping
     ResponseEntity status(@PathVariable String convertJobId) {

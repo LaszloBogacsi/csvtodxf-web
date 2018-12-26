@@ -22,8 +22,7 @@ public class UploadFileController {
     @Qualifier("fileSystemPathProvider")
     private PathProvider pathProvider;
 
-    @CrossOrigin(origins = "http://evil.com/")
-
+    @CrossOrigin
     @RequestMapping("/upload-file")
     @PostMapping
     ResponseEntity uploadFile(@ModelAttribute("file") MultipartFile file) {
