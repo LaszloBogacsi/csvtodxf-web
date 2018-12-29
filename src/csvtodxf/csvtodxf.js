@@ -4,6 +4,7 @@ import Result from "./results/Result";
 import {Button, Container, Dimmer, Grid, Loader, Segment} from "semantic-ui-react";
 import ProgressHeader from "./progress-header/ProgressHeader";
 import {httpModule as http} from "./shared/httpModule";
+import MessageDisplayer from "./shared/messageDisplayer";
 
 
 class CsvToDxf extends Component {
@@ -16,6 +17,7 @@ class CsvToDxf extends Component {
         this.restartConverter = this.restartConverter.bind(this);
         this.toggleLoader = this.toggleLoader.bind(this);
         this.handleFileNameChange = this.handleFileNameChange.bind(this);
+        this.displayMessage = this.displayMessage.bind(this);
         this.state = this.getInitialState();
     }
 
@@ -24,6 +26,7 @@ class CsvToDxf extends Component {
             convertResponse: '',
             isConvertDone: false,
             loaderActive: false,
+            message: {},
 
             step1IsDone: false,
             step1Active: true,
@@ -128,10 +131,15 @@ class CsvToDxf extends Component {
         this.setState(this.getInitialState());
     }
 
+    displayMessage(message) {
+        this.setState({message: message})
+    }
+
     render() {
         const convertResponse = this.state.convertResponse;
         let isConvertComplete = this.state.isConvertDone;
         let loaderActive = this.state.loaderActive;
+        let message = this.state.message;
         let step1 = {
             active: this.state.step1Active,
             isDone: this.state.step1IsDone,
@@ -159,6 +167,7 @@ class CsvToDxf extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Container>
+                            <MessageDisplayer message={message}/>
                             <Segment raised>
                                 <Dimmer active={loaderActive}>
                                     <Loader content='Loading'/>
@@ -169,7 +178,8 @@ class CsvToDxf extends Component {
                                                onToggleLoader={this.toggleLoader}
                                                onProgress={this.handleProgress}
                                                onConvertResponse={this.handleConvertResponse}
-                                               onFileNameChange={this.handleFileNameChange}/>
+                                               onFileNameChange={this.handleFileNameChange}
+                                               onError={this.displayMessage}/>
                                 ) : (
                                     <Result convertResponse={convertResponse} onProgress={this.handleProgress}/>
                                 )}

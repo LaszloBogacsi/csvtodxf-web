@@ -24,6 +24,9 @@ class DrawingConfig extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    isTextHeightValid(textHeightValue) {
+        return /^\d+\.\d+$/.test(textHeightValue) || /^\d+$/.test(textHeightValue);
+    }
     handleChange(event, data) {
         console.log(data);
         const value = (data.type === 'checkbox') ? data.checked : data.value;
@@ -35,9 +38,20 @@ class DrawingConfig extends Component {
         this.props.onToggleLoader();
     }
 
+    submit = (event) => {
+        if (this.isTextHeightValid(this.state.textHeight)) {
+            this.handleSubmit(event);
+        } else {
+            this.props.onError({header: "Invalid TextHeight", content: `${this.state.textHeight} is not in valid format, please input a decimal number separated by " . "`})
+        }
+
+
+    };
+
 
     handleSubmit(event) {
         event.preventDefault();
+        this.props.onError({});
         const requestBody = JSON.stringify(this.state);
         const url = '/convert';
         this.toggleLoader();
@@ -53,6 +67,8 @@ class DrawingConfig extends Component {
             this.props.onConvertResponse(response.data);
         }).catch(error => {
             console.log(error);
+            this.toggleLoader();
+            this.props.onError({header: "Error sending drawing configurations", content: error.message})
         })}, 1000);
     }
 
@@ -74,7 +90,7 @@ class DrawingConfig extends Component {
     render() {
         return (
             <div>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.submit}>
                     <Form.Group widths="equal">
                         <Form.Field name="separator" control={Select} options={this.separators} label="Separator"
                                     onChange={this.handleChange} value={this.state.separator}/>

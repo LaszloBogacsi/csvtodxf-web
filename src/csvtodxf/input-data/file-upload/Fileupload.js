@@ -27,7 +27,7 @@ class Fileupload extends Component {
 
     handleSubmit(file) {
         this.props.onFileNameChange(file.name);
-
+        this.props.onError({});
         let data = new FormData();
         data.append("file", file);
         const url = '/upload-file';
@@ -52,6 +52,7 @@ class Fileupload extends Component {
             console.log(error);
             this.toggleLoader();
             this.props.onUploadFinished(false);
+            this.props.onError({header: "Upload Error", content: error.message});
         })
     }
 

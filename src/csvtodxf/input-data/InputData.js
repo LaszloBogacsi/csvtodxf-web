@@ -6,12 +6,6 @@ import {Container} from "semantic-ui-react";
 class InputData extends Component {
     constructor(props) {
         super(props);
-        this.handleFileNameChange = this.handleFileNameChange.bind(this);
-        this.handleDrawingIdChange = this.handleDrawingIdChange.bind(this);
-        this.handleConvertResponse = this.handleConvertResponse.bind(this);
-        this.handleUploadFinished = this.handleUploadFinished.bind(this);
-        this.toggleLoader = this.toggleLoader.bind(this);
-
         this.state = this.getInitialState();
     }
 
@@ -24,32 +18,36 @@ class InputData extends Component {
         return initialState;
     };
 
-    handleFileNameChange(fileName) {
+    handleFileNameChange = fileName => {
         this.setState({fileName: fileName});
         this.props.onFileNameChange(fileName);
-    }
+    };
 
-    handleDrawingIdChange(drawingId) {
+    handleDrawingIdChange = drawingId => {
         this.setState({drawingId: drawingId})
-    }
+    };
 
-    handleConvertResponse(convertResponse) {
+    handleConvertResponse = convertResponse => {
         this.props.onConvertResponse(convertResponse);
-    }
+    };
 
-    handleUploadFinished(isDone) {
+    handleUploadFinished = isDone => {
         this.setState({uploadDone: isDone});
         if (isDone) this.props.onProgress(2);
-    }
+    };
 
     resetState() {
         this.setState(this.getInitialState);
         if (this.fileUpload) this.fileUpload.resetState();
     }
 
-    toggleLoader() {
+    toggleLoader = () => {
         this.props.onToggleLoader();
-    }
+    };
+
+    handleError = message => {
+        this.props.onError(message);
+    };
 
 
     render() {
@@ -64,12 +62,14 @@ class InputData extends Component {
                                 onUploadFinished={this.handleUploadFinished}
                                 onToggleLoader={this.toggleLoader}
                                 onFileNameChange={this.handleFileNameChange}
-                                onDrawingIdChange={this.handleDrawingIdChange}/>
+                                onDrawingIdChange={this.handleDrawingIdChange}
+                                onError={this.handleError}/>
 
                 ) : (
                     <DrawingConfig fileName={fileName} drawingId={drawingId}
                                    onConvertResponse={this.handleConvertResponse}
-                                    onToggleLoader={this.toggleLoader}/>
+                                   onToggleLoader={this.toggleLoader}
+                                   onError={this.handleError}/>
                 )}
             </Container>
         );
