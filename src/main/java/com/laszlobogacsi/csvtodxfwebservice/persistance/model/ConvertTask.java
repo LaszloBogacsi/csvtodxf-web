@@ -8,10 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Builder
@@ -29,6 +26,7 @@ public class ConvertTask {
 
     private String downloadPath;
 
+    @Enumerated(EnumType.STRING)
     private JobResult result;
 
     @Embedded
