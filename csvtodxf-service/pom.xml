@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.laszlobogacsi</groupId>
-	<artifactId>csvtodxf-web-service</artifactId>
+	<artifactId>csvtodxf-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>csvtodxf-web-service</name>
+	<name>csvtodxf-service</name>
 	<description>Csv To Dxf converter backend</description>
 
 	<parent>
