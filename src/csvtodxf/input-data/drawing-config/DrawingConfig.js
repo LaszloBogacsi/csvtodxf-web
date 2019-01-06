@@ -15,7 +15,7 @@ class DrawingConfig extends Component {
             doPrintCoords: false,
             doPrintCode: false,
             doPrintHeight: true,
-            doPrint3D: true,
+            doPrint3D: false,
             doLayerByCode: false
 
         };
