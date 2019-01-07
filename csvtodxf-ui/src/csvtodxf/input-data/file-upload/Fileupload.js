@@ -95,16 +95,22 @@ class Fileupload extends Component {
         if (this.state.dropzoneActive) className += ' ' + styles.onDragActive;
         return (
             <form>
-                <Dropzone
-                    className={className}
-                    acceptClassName={styles.accepted}
-                    rejectClassName={styles.rejected}
-                    onDragEnter={this.onDragEnter.bind(this)}
-                    onDragLeave={this.onDragLeave.bind(this)}
-                    accept={"application/vnd.ms-excel, text/plain, text/csv"}
-                    onDrop={this.onDrop}>
-                    {({isDragReject}) => isDragReject ? "File type not supported" : "Drag & Drop or click to select csv file"}
-
+                <Dropzone onDrop={this.onDrop}>
+                    {({getRootProps, getInputProps, isDragReject}) => {
+                        return (
+                            <div {...getRootProps()}
+                                 className={className}
+                                 acceptClassName={styles.accepted}
+                                 rejectClassName={styles.rejected}
+                                 onDragEnter={this.onDragEnter.bind(this)}
+                                 onDragLeave={this.onDragLeave.bind(this)}
+                                 accept={"application/vnd.ms-excel, text/plain, text/csv"}
+                            >
+                                <input {...getInputProps()} />
+                                {isDragReject ? "File type not supported" : "Drag & Drop or click to select csv file"}
+                            </div>
+                        )
+                    }}
                 </Dropzone>
                 <ul>{files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
             </form>
