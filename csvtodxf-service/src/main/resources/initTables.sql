@@ -1,3 +1,5 @@
+select count(*) from pg_catalog.pg_database where datname = 'csvtodxf-prod';
+
 CREATE TABLE IF NOT EXISTS public.convert_task
 (
   id bigint NOT NULL,

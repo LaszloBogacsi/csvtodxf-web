@@ -1,5 +1,6 @@
 package com.laszlobogacsi.csvtodxfwebservice;
 
+import com.laszlobogacsi.csvtodxfwebservice.configuration.UploadProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

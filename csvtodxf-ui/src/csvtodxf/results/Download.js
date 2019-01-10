@@ -10,7 +10,7 @@ class Download extends Component {
 
     handleOnclick() {
         const id = this.props.downloadId;
-        const url = `${baseURL}/download/${id}`;
+        const url = `${baseURL}/_download/${id}`;
         this.props.onProgress(4);
         window.location.href = url;
     }

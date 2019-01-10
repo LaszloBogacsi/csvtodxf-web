@@ -1,5 +1,6 @@
 package com.laszlobogacsi.csvtodxfwebservice;
 
+import com.laszlobogacsi.csvtodxfwebservice.configuration.UploadProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

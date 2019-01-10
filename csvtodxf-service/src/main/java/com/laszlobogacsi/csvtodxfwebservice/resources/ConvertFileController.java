@@ -74,7 +74,7 @@ public class ConvertFileController {
                 .body(JsonMapper.fromObj(result));
     }
 
-    @RequestMapping("/download/{downloadId}") // this is should be the job id
+    @RequestMapping("/_download/{downloadId}") // this is should be the job id
     @GetMapping
     ResponseEntity download(@PathVariable String downloadId) {
         ConvertTask convertTask = convertTaskRepository.findByDownloadId(downloadId).get();
