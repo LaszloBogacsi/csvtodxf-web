@@ -1,0 +1,13 @@
+version: 0.0
+os: linux
+files:
+  - source: ./
+    destination: /home/ubuntu/csvtodxf-web
+hooks:
+  BeforeInstall:
+    - location: scripts/buildApp.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/startApp.sh
+      runas: ubuntu
