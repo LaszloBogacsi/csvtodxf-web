@@ -1,24 +1,19 @@
 import React, {Component} from 'react'
-import Dropzone from "react-dropzone";
 import styles from "./dropzone.css";
 import {httpModule as http} from "../../shared/httpModule";
+import Dropzone from "react-dropzone";
 
 class Fileupload extends Component {
 
     constructor(props) {
         super(props);
         this.state = this.getInitialState();
-
-        this.handleChange = this.handleChange.bind(this);
-        this.onDrop = this.onDrop.bind(this);
     }
 
     getInitialState = () => {
-        const initialState = {
+        return {
             files: [],
-            dropzoneActive: false
         };
-        return initialState;
     };
 
     toggleLoader() {
@@ -56,33 +51,17 @@ class Fileupload extends Component {
         })
     }
 
-    handleChange(event) {
-        const file = event.target.files[0];
-        this.handleSubmit(file);
-    }
-
-    onDragEnter() {
-        this.setState({
-            dropzoneActive: true
-        });
-    }
-
-    onDragLeave() {
-        this.setState({
-            dropzoneActive: false
-        });
-    }
-
     onDrop(accepted, rejected) {
-        this.setState({
-            files: accepted,
-            dropzoneActive: false
-        });
-        if (rejected.length > 0) {
-            console.log("this filetype is not supported: " + rejected[0].name);
+        if (accepted.length) {
+            this.setState({
+                files: accepted,
+            }, () => {
+                this.handleSubmit(this.state.files[0]);
+            });
         }
-        const oneFile = this.state.files[0];
-        if (oneFile) this.handleSubmit(oneFile);
+        if (rejected.length > 0) {
+            this.props.onError({header: "File type not supported", content: rejected[0].name});
+        }
     }
 
     resetState() {
@@ -92,28 +71,24 @@ class Fileupload extends Component {
     render() {
         let className = styles.dropZone;
         let files = this.state.files;
-        if (this.state.dropzoneActive) className += ' ' + styles.onDragActive;
         return (
-            <form>
-                <Dropzone onDrop={this.onDrop}>
-                    {({getRootProps, getInputProps, isDragReject}) => {
+            <div>
+                <Dropzone onDrop={(acc, rej) => this.onDrop(acc, rej)}
+                          accept="application/vnd.ms-excel, text/plain, text/csv"
+                          multiple={false}>
+                    {({getRootProps, getInputProps, isDragReject, isDragAccepted, isDragActive}) => {
+                        className = isDragActive ? className += " " + styles.onDragActive : styles.dropZone;
                         return (
                             <div {...getRootProps()}
-                                 className={className}
-                                 acceptClassName={styles.accepted}
-                                 rejectClassName={styles.rejected}
-                                 onDragEnter={this.onDragEnter.bind(this)}
-                                 onDragLeave={this.onDragLeave.bind(this)}
-                                 accept={"application/vnd.ms-excel, text/plain, text/csv"}
-                            >
-                                <input {...getInputProps()} />
+                                 className={className}>
+                                <input {...getInputProps()}/>
                                 {isDragReject ? "File type not supported" : "Drag & Drop or click to select csv file"}
                             </div>
                         )
                     }}
                 </Dropzone>
                 <ul>{files.map((f, index) => <li key={index}>{f.name} - {f.size} bytes</li>)}</ul>
-            </form>
+            </div>
         );
 
     }

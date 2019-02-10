@@ -45,20 +45,17 @@ class CsvToDxf extends Component {
     };
 
     handleConvertResponse(response) {
-        console.log(response);
         let retryCount = 0;
         this.checkConvertStatus(response.response, retryCount);
 
     }
 
     handleFileNameChange(fileName) {
-        console.log(fileName);
         this.setState({step1FileName: fileName})
     }
 
     checkConvertStatus(convertJobId, numOfretries) {
         const url = `/convert/status/${convertJobId}`;
-        console.log("sending request with " + convertJobId);
         http.get(url, {
             headers: {
                 'Accept': 'application/json',
@@ -66,7 +63,6 @@ class CsvToDxf extends Component {
         }).then(response => {
             setTimeout(() => {
                 if (response.data.jobResult === 'SUCCESS') {
-                    console.log(response.data.jobResult);
                     this.setState({
                         isConvertDone: true,
                         convertResponse: response.data,
@@ -77,16 +73,16 @@ class CsvToDxf extends Component {
                 } else if (numOfretries < 5) {
                     const numOfTries = numOfretries + 1;
                     this.checkConvertStatus(convertJobId, numOfTries); // recursive
-                    console.log("not done yet: " + numOfretries);
                 } else {
-                    console.log("Something went wong plese retry"); // display to user.
+                    this.toggleLoader();
+                    this.displayMessage({header: "Ooops...", content: "Something went wrong please retry"});
                 }
-                console.log(response);
             }, 2000)
 
         })
             .catch(error => {
-                console.log(error);
+                this.displayMessage({header: "error", content: error.toString()});
+
             })
     }
 
@@ -171,7 +167,6 @@ class CsvToDxf extends Component {
                             <Segment raised>
                                 <Dimmer active={loaderActive}>
                                     <Loader content='Loading'/>
-
                                 </Dimmer>
                                 {!isConvertComplete ? (
                                     <InputData ref={inputData => this.inputData = inputData}
@@ -184,16 +179,12 @@ class CsvToDxf extends Component {
                                     <Result convertResponse={convertResponse} onProgress={this.handleProgress}/>
                                 )}
                             </Segment>
-
                             <Button onClick={this.restartConverter}>New Convert</Button>
-
                         </Container>
-
                     </Grid.Row>
                 </Grid>
             </Container>
         );
-
     }
 }
 
