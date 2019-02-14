@@ -38,6 +38,50 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>${frontend-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>npm run-script build-dev</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <arguments>run build-dev</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${main.basedir}/csvtodxf-service/src/main/resources/static
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>build</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
             <properties>
                 <spring.profile.active>dev</spring.profile.active>
             </properties>
@@ -69,14 +113,14 @@
                                 <phase>generate-resources</phase>
                             </execution>
                             <!--<execution>-->
-                                <!--<id>npm test</id>-->
-                                <!--<goals>-->
-                                    <!--<goal>npm</goal>-->
-                                <!--</goals>-->
-                                <!--<phase>test</phase>-->
-                                <!--<configuration>-->
-                                    <!--<arguments>test</arguments>-->
-                                <!--</configuration>-->
+                            <!--<id>npm test</id>-->
+                            <!--<goals>-->
+                            <!--<goal>npm</goal>-->
+                            <!--</goals>-->
+                            <!--<phase>test</phase>-->
+                            <!--<configuration>-->
+                            <!--<arguments>test</arguments>-->
+                            <!--</configuration>-->
                             <!--</execution>-->
                             <execution>
                                 <id>npm run-script build</id>
@@ -102,7 +146,8 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${main.basedir}/csvtodxf-service/src/main/resources/static</outputDirectory>
+                                    <outputDirectory>${main.basedir}/csvtodxf-service/src/main/resources/static
+                                    </outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>build</directory>
