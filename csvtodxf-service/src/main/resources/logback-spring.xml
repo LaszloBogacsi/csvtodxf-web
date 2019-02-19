@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <springProfile name="prod">
+        <property name="LOGS" value="/home/ec2-user/logs" />
 
-    <property name="LOGS" value="./logs" />
+    </springProfile>
+
+    <springProfile name="!prod">
+        <property name="LOGS" value="./logs" />
+
+    </springProfile>
+
 
     <appender name="Console"
               class="ch.qos.logback.core.ConsoleAppender">
