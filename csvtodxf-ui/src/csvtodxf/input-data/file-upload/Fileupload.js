@@ -31,7 +31,6 @@ class Fileupload extends Component {
                 'Accept': 'application/json',
             },
             onUploadProgress: (progressEvent => {
-                console.log(progressEvent);
                 if (progressEvent.lengthComputable) {
                     //update progressbar here
                 }
@@ -41,10 +40,8 @@ class Fileupload extends Component {
         http.post(url, data, config).then(response => {
             this.props.onUploadFinished(true);
             this.props.onDrawingIdChange(response.data.id);
-            console.log(response);
             this.toggleLoader();
         }).catch(error => {
-            console.log(error);
             this.toggleLoader();
             this.props.onUploadFinished(false);
             this.props.onError({header: "Upload Error", content: error.message});

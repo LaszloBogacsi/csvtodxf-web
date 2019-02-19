@@ -19,7 +19,6 @@ class DrawingConfig extends Component {
             doLayerByCode: false
 
         };
-        console.log(this.state.fileName);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -28,7 +27,6 @@ class DrawingConfig extends Component {
         return /^\d+\.\d+$/.test(textHeightValue) || /^\d+$/.test(textHeightValue);
     }
     handleChange(event, data) {
-        console.log(data);
         const value = (data.type === 'checkbox') ? data.checked : data.value;
         this.setState({[data.name]: value});
 
@@ -63,10 +61,8 @@ class DrawingConfig extends Component {
         };
         setTimeout( () => {
         http.post(url, requestBody, config).then(response => {
-            console.log(response);
             this.props.onConvertResponse(response.data);
         }).catch(error => {
-            console.log(error);
             this.toggleLoader();
             this.props.onError({header: "Error sending drawing configurations", content: error.message})
         })}, 1000);

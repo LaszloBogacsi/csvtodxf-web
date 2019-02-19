@@ -2,12 +2,10 @@
 <configuration>
     <springProfile name="prod">
         <property name="LOGS" value="/home/ec2-user/logs" />
-
     </springProfile>
 
-    <springProfile name="!prod">
+    <springProfile name="dev">
         <property name="LOGS" value="./logs" />
-
     </springProfile>
 
 
