@@ -2,6 +2,7 @@ package com.laszlobogacsi.csvtodxfwebservice.resources;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
 public class ConvertTaskResult {
@@ -14,5 +15,6 @@ public class ConvertTaskResult {
     @JsonProperty
     private double fileSize;
     @JsonProperty
+    @Getter
     private JobResult jobResult;
 }

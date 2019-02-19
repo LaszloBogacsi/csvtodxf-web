@@ -28,7 +28,9 @@ public class UploadFileController {
     ResponseEntity uploadFile(@ModelAttribute("file") MultipartFile file) {
         UUID uniqueFolderName = UUID.randomUUID();
         fileStorageService.store(file, pathProvider.getPathForParentFolderBy(uniqueFolderName.toString()));
-        ResponseEntity response = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"id\":\"" + uniqueFolderName + "\", \"fileName\":\""+ file.getOriginalFilename()+"\"}");
-        return response;
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"id\":\"" + uniqueFolderName + "\", \"fileName\":\""+ file.getOriginalFilename()+"\"}");
     }
 }

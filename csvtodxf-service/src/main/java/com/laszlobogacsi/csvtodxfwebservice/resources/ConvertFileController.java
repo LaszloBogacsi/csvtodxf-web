@@ -38,9 +38,7 @@ public class ConvertFileController {
     @PostMapping
     ResponseEntity convert(@RequestBody DrawingConfig config) {
         String convertJobId = UUID.randomUUID().toString();
-        System.out.println("ConvertJob start");
         manager.start(new ConvertJob(convertJobId, config));
-        System.out.println("return jobId");
         return ResponseEntity
                 .status(202)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -51,9 +49,7 @@ public class ConvertFileController {
     @RequestMapping("/convert/status/{convertJobId}")
     @GetMapping
     ResponseEntity status(@PathVariable String convertJobId) {
-        System.out.println("endpoint called");
         Optional<ConvertTask> optionalTask = convertTaskRepository.findByJobId(convertJobId);
-        System.out.println("task found");
         ConvertTaskResult result;
         if (optionalTask.isPresent()) {
             ConvertTask task = optionalTask.get();
@@ -68,24 +64,37 @@ public class ConvertFileController {
             result = ConvertTaskResult.builder().jobResult(JobResult.IN_PROGRESS).build();
         }
 
-        return ResponseEntity
-                .status(200)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(JsonMapper.fromObj(result));
+        if (result.getJobResult() == JobResult.CONVERSION_ERROR) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(result);
+        } else {
+            return ResponseEntity
+                    .status(200)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(JsonMapper.fromObj(result));
+        }
     }
 
     @RequestMapping("/_download/{downloadId}") // this is should be the job id
     @GetMapping
     ResponseEntity download(@PathVariable String downloadId) {
-        ConvertTask convertTask = convertTaskRepository.findByDownloadId(downloadId).get();
-        Resource resource = fileStorageService.loadFileAsResource(convertTask.getDownloadPath());
-        System.out.println("downloadId = " + downloadId);
-        System.out.println("convertTask = " + convertTask.getDownloadPath());
-        ResponseEntity response = ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        ResponseEntity response;
+        if (convertTaskRepository.findByDownloadId(downloadId).isPresent()) {
+            ConvertTask convertTask = convertTaskRepository.findByDownloadId(downloadId).get();
+            Resource resource = fileStorageService.loadFileAsResource(convertTask.getDownloadPath());
+            response = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } else {
+            response = ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Can not find the requested file");
+        }
+
         return response;
     }
 

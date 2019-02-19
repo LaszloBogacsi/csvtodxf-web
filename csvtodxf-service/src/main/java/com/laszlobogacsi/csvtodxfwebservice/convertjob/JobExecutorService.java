@@ -8,6 +8,8 @@ import com.laszlobogacsi.csvtodxfwebservice.file.PathProvider;
 import com.laszlobogacsi.csvtodxfwebservice.report.ConversionReport;
 import com.laszlobogacsi.csvtodxfwebservice.resources.JobResponse;
 import com.laszlobogacsi.csvtodxfwebservice.resources.JobResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ import java.util.concurrent.Future;
 
 @Service
 public class JobExecutorService {
-
+    private final Logger logger = LoggerFactory.getLogger(JobExecutorService.class);
     private static final int MAX_THREADS = 4;
     private PathProvider pathProvider;
     private ExecutorService executorService;
@@ -37,17 +39,13 @@ public class JobExecutorService {
         return CompletableFuture.supplyAsync(() -> execute(job), executorService);
     }
 
-    Future<JobResponse> executeJob(ConvertJob job) {
-        return executorService.submit(() -> execute(job));
-    }
-
     private JobResponse execute(ConvertJob job) {
         Converter converter = new CsvToDxfConverter(fileReader, pathProvider);
         try {
             ConversionReport report = converter.convert(job.config);
             return new JobResponse(job.getJobId(), generateDownloadId(), report, JobResult.SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace(); // TODO: exception handling strategy
+            logger.error("Error " + e.getMessage() + " jobId: " + job.getJobId());
             return new JobResponse(job.getJobId(), "0", ConversionReport.builder().build(), JobResult.CONVERSION_ERROR);
         }
     }

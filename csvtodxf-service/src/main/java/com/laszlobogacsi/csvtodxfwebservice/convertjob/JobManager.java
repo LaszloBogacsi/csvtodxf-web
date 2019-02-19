@@ -33,7 +33,6 @@ public class JobManager {
                         compress(fileCompressionInfo);
                         save(response, fileCompressionInfo);
             });
-            System.out.println("job saved");
     }
 
     private void compress(FileCompressionInfo compressionInfo) {

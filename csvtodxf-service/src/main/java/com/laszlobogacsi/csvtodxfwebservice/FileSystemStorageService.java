@@ -1,6 +1,9 @@
 package com.laszlobogacsi.csvtodxfwebservice;
 
 import com.laszlobogacsi.csvtodxfwebservice.configuration.UploadProperties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +15,7 @@ import java.io.IOException;
 
 @Service("fileStorageService")
 public class FileSystemStorageService implements StorageService {
+    private final Logger logger = LoggerFactory.getLogger(FileSystemStorageService.class);
 
     private UploadProperties configuration;
 
@@ -33,8 +37,11 @@ public class FileSystemStorageService implements StorageService {
 
         try {
             multipartFile.transferTo(serverFile);
+            logger.info("Storing file to destination: " + destination + " filename: " + fileName);
+
         } catch (IOException e) {
             e.printStackTrace(); // TODO: handle io errors
+            logger.error("Error: " + e.getMessage() + " while storing file to destination: " + destination + " filename: " + fileName);
         }
     }
 
