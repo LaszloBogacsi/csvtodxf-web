@@ -1,0 +1,2 @@
+MAILTO="bogacsi.laszlo@gmail.com"
+0 0 * * * scripts/cleanUpDB.sh > /dev/null 2>&1
