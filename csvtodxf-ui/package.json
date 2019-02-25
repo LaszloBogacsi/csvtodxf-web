@@ -16,9 +16,9 @@
     "webpack": "4.19.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build-dev": "dotenv -e .env.development react-scripts build",
+    "start": "REACT_APP_GIT_SHA=`git rev-parse HEAD` react-scripts start",
+    "build": "REACT_APP_GIT_SHA=`git rev-parse HEAD` react-scripts build",
+    "build-dev": "REACT_APP_GIT_SHA=`git rev-parse HEAD` dotenv -e .env.development react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
