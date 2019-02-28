@@ -23,16 +23,14 @@ import java.util.concurrent.Future;
 public class JobExecutorService {
     private final Logger logger = LoggerFactory.getLogger(JobExecutorService.class);
     private static final int MAX_THREADS = 4;
-    private PathProvider pathProvider;
     private ExecutorService executorService;
-    private final FileReader fileReader;
+    private final Converter converter;
 
 
     @Autowired
     public JobExecutorService(PathProvider pathProvider) {
-        this.pathProvider = pathProvider;
         this.executorService = Executors.newFixedThreadPool(MAX_THREADS);
-        fileReader = new CsvFileReader();
+        converter = new CsvToDxfConverter(new CsvFileReader(), pathProvider);
     }
 
     CompletableFuture<JobResponse> executeAsyncJob(ConvertJob job) {
@@ -40,7 +38,6 @@ public class JobExecutorService {
     }
 
     private JobResponse execute(ConvertJob job) {
-        Converter converter = new CsvToDxfConverter(fileReader, pathProvider);
         try {
             ConversionReport report = converter.convert(job.config);
             return new JobResponse(job.getJobId(), generateDownloadId(), report, JobResult.SUCCESS);

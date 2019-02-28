@@ -6,6 +6,7 @@ import com.laszlobogacsi.csvtodxfwebservice.file.CsvLine;
 import com.laszlobogacsi.csvtodxfwebservice.file.FileReader;
 import com.laszlobogacsi.csvtodxfwebservice.file.PathProvider;
 import com.laszlobogacsi.csvtodxfwebservice.report.ConversionReport;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
 
 public class CsvToDxfConverter implements Converter {
     private PathProvider pathProvider;
