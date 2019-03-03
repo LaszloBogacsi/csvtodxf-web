@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,7 +20,7 @@ public class CustomErrorController implements ErrorController {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         if (status != null) {
             int statusCode = Integer.valueOf(status.toString());
-            model .addAttribute("messageCode", statusCode);
+            model.addAttribute("messageCode", statusCode);
             if (statusCode == HttpStatus.NOT_FOUND.value()) {
                 model.addAttribute("messageTitle", HttpStatus.NOT_FOUND.getReasonPhrase())
                         .addAttribute("message", "The page you are looking for might have been removed had its name changed or is temporarily unavailable.");

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${messageTitle}"></title>
+    <title th:text="${messageTitle}">Error Status Page</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -128,8 +128,8 @@
         <div class="error-code">
             <h1>:(</h1>
         </div>
-        <h2 th:text="${messageCode} + ' - ' + ${messageTitle}"></h2>
-        <p th:text="${message}"></p>
+        <h2 th:text="${messageCode} + ' - ' + ${messageTitle}">Oooopps...</h2>
+        <p th:text="${message}">Something went wrong</p>
     </div>
 </div>
 
