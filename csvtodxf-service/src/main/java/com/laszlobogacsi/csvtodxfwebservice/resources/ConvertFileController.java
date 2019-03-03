@@ -77,7 +77,7 @@ public class ConvertFileController {
         }
     }
 
-    @RequestMapping("/_download/{downloadId}") // this is should be the job id
+    @RequestMapping("/_download/{downloadId}")
     @GetMapping
     ResponseEntity download(@PathVariable String downloadId) {
         ResponseEntity response;
